@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Home, ShoppingCart, Package, BarChart3, Bot, Users } from "lucide-react";
+import { Home, ShoppingCart, Package, BarChart3, Bot, Users, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 
@@ -65,6 +65,14 @@ export default function AppLayout({ children, pageTitle = "Dashboard" }: { child
                 <SidebarMenuButton tooltip="Análise" isActive={pathname.startsWith('/performance')}>
                   <BarChart3 />
                   <span>Análise</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+               <Link href="/ai-report">
+                <SidebarMenuButton tooltip="Relatório IA" isActive={pathname.startsWith('/ai-report')}>
+                  <Lightbulb />
+                  <span>Relatório IA</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
