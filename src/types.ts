@@ -48,6 +48,11 @@ export interface ProductsSold {
     quantity: number;
 }
 
+export interface ActiveCustomer {
+    customerName: string;
+    purchaseCount: number;
+}
+
 
 // --- Tipos para Visualização (com dados aninhados) ---
 export interface SaleWithDetails extends Omit<Sale, 'items' | 'customerId'> {

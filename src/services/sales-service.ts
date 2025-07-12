@@ -9,6 +9,7 @@ import type {
   SaleWithDetails,
   SalesByMonth,
   ProductsSold,
+  ActiveCustomer,
 } from "@/types";
 
 // Simulação de um banco de dados em memória
@@ -243,17 +244,17 @@ export async function getSalesByMonth(): Promise<SalesByMonth[]> {
     const salesByMonth: { [key: string]: number } = {};
 
     sales.forEach(sale => {
-        const month = new Date(sale.date).toLocaleString('default', { month: 'short' });
+        const month = new Date(sale.date).toLocaleString('pt-BR', { month: 'short' });
         if (!salesByMonth[month]) {
             salesByMonth[month] = 0;
         }
         salesByMonth[month] += sale.total;
     });
 
-    const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthOrder = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
     
     return monthOrder.map(month => ({
-        month,
+        month: month.charAt(0).toUpperCase() + month.slice(1),
         total: salesByMonth[month] || 0,
     })).filter(d => d.total > 0);
 }
@@ -281,4 +282,27 @@ export async function getTopProductsSold(): Promise<ProductsSold[]> {
         })
         .sort((a, b) => b.quantity - a.quantity)
         .slice(0, 5); // Retorna os 5 mais vendidos
+}
+
+export async function getTopActiveCustomers(): Promise<ActiveCustomer[]> {
+    await simulateDelay();
+    const customerCount: { [key: string]: number } = {};
+
+    sales.forEach(sale => {
+        if (!customerCount[sale.customerId]) {
+            customerCount[sale.customerId] = 0;
+        }
+        customerCount[sale.customerId]++;
+    });
+
+    return Object.entries(customerCount)
+        .map(([customerId, purchaseCount]) => {
+            const customer = customers.find(c => c.id === customerId);
+            return {
+                customerName: customer ? customer.name : 'Desconhecido',
+                purchaseCount,
+            };
+        })
+        .sort((a, b) => b.purchaseCount - a.purchaseCount)
+        .slice(0, 5); // Retorna os 5 clientes mais ativos
 }

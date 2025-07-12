@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
 import { getDashboardStats } from "@/services/sales-service";
 import type { DashboardStats } from "@/types";
+import { SalesByMonthChart } from "./sales-by-month-chart";
+import { RecentSales } from "./recent-sales";
 
 export function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -84,12 +86,10 @@ export function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Visão Geral</CardTitle>
+            <CardTitle>Vendas por Mês</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
-             <div className="h-80 w-full rounded-md bg-muted/50 flex items-center justify-center">
-                <p className="text-muted-foreground">Gráfico em breve</p>
-             </div>
+             <SalesByMonthChart />
           </CardContent>
         </Card>
         <Card className="col-span-3">
@@ -97,9 +97,7 @@ export function Dashboard() {
             <CardTitle>Vendas Recentes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-80 w-full rounded-md bg-muted/50 flex items-center justify-center">
-                <p className="text-muted-foreground">Lista de vendas em breve</p>
-             </div>
+            <RecentSales />
           </CardContent>
         </Card>
       </div>
