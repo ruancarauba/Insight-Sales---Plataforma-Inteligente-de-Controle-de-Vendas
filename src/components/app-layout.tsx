@@ -4,16 +4,19 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Home, ShoppingCart, Package, BarChart3, Bot, Users, Lightbulb } from "lucide-react";
+import { Home, ShoppingCart, Package, BarChart3, Bot, Users, Lightbulb, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
+import { Button } from "./ui/button";
 
 export default function AppLayout({ children, pageTitle = "Dashboard" }: { children: React.ReactNode, pageTitle?: string }) {
   const pathname = usePathname();
@@ -79,6 +82,15 @@ export default function AppLayout({ children, pageTitle = "Dashboard" }: { child
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
+        <SidebarSeparator />
+        <SidebarFooter>
+          <Link href="/">
+            <Button variant="ghost" className="w-full justify-start">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sair</span>
+            </Button>
+          </Link>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
