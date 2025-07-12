@@ -24,7 +24,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/" legacyBehavior passHref>
+              <Link href="/">
                 <SidebarMenuButton tooltip="Dashboard" isActive={true}>
                   <Home />
                   <span>Dashboard</span>
@@ -32,7 +32,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/sales" legacyBehavior passHref>
+              <Link href="/sales">
                 <SidebarMenuButton tooltip="Vendas">
                   <ShoppingCart />
                   <span>Vendas</span>
@@ -40,7 +40,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/products" legacyBehavior passHref>
+              <Link href="/products">
                 <SidebarMenuButton tooltip="Produtos">
                   <Package />
                   <span>Produtos</span>
@@ -48,7 +48,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-               <Link href="/performance" legacyBehavior passHref>
+               <Link href="/performance">
                 <SidebarMenuButton tooltip="Análise">
                   <BarChart3 />
                   <span>Análise</span>
