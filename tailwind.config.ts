@@ -11,6 +11,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
+        grotesk: ["var(--font-space-grotesk)", "sans-serif"],
       },
       colors: {
         background: 'hsl(var(--background))',

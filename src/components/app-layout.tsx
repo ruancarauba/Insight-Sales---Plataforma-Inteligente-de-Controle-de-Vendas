@@ -23,7 +23,7 @@ export default function AppLayout({ children, pageTitle = "Dashboard" }: { child
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Bot size={24} className="text-primary" />
-            <h1 className="text-lg font-semibold">Insight Sales</h1>
+            <h1 className="text-lg font-semibold font-grotesk">Sales Insights Hub</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -75,7 +75,7 @@ export default function AppLayout({ children, pageTitle = "Dashboard" }: { child
         <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
           <SidebarTrigger className="md:hidden" />
           <div className="flex-1">
-            <h1 className="text-lg font-semibold">{pageTitle}</h1>
+            <h1 className="text-lg font-semibold font-grotesk">{pageTitle}</h1>
           </div>
         </header>
         <main className="flex-1 p-6">{children}</main>
