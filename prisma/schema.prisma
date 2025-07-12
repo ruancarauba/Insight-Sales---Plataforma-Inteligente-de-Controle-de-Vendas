@@ -3,7 +3,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-musl"]
 }
 
 datasource db {
@@ -12,38 +12,40 @@ datasource db {
 }
 
 model Product {
-  id    String @id @default(cuid())
-  name  String
-  price Float
-  stock Int
-
-  saleItems SaleItem[]
+  id          String     @id @default(cuid())
+  name        String
+  price       Float
+  stock       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  SaleItem    SaleItem[]
 }
 
 model Customer {
-  id    String @id @default(cuid())
-  name  String
-  email String @unique
-
-  sales Sale[]
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sales     Sale[]
 }
 
 model Sale {
-  id         String   @id @default(cuid())
-  date       DateTime @default(now())
-  total      Float
+  id         String     @id @default(cuid())
   customerId String
-  customer   Customer @relation(fields: [customerId], references: [id])
-
-  items SaleItem[]
+  total      Float
+  date       DateTime   @default(now())
+  customer   Customer   @relation(fields: [customerId], references: [id])
+  items      SaleItem[]
+  updatedAt  DateTime   @updatedAt
 }
 
 model SaleItem {
   id        String  @id @default(cuid())
-  quantity  Int
-  price     Float // Preço no momento da venda
   saleId    String
-  sale      Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
   productId String
+  quantity  Int
+  price     Float
+  sale      Sale    @relation(fields: [saleId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
 }
