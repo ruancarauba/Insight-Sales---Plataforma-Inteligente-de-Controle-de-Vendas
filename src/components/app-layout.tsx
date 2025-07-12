@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Home, ShoppingCart, Package, BarChart3, Bot, PlusCircle } from "lucide-react";
+import { Home, ShoppingCart, Package, BarChart3, Bot, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 
@@ -47,6 +47,14 @@ export default function AppLayout({ children, pageTitle = "Dashboard" }: { child
                 <SidebarMenuButton tooltip="Produtos" isActive={pathname.startsWith('/products')}>
                   <Package />
                   <span>Produtos</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/customers">
+                <SidebarMenuButton tooltip="Clientes" isActive={pathname.startsWith('/customers')}>
+                  <Users />
+                  <span>Clientes</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
