@@ -1,204 +1,209 @@
 
 "use server";
 
-import { Prisma } from "@prisma/client";
-import prisma from "@/lib/prisma";
 import type {
   DashboardStats,
+  Product,
   ProductFormValues,
+  Customer,
   CustomerFormValues,
+  Sale,
+  SaleItem,
   SaleFormValues,
   SaleWithDetails,
   SalesByMonth,
   ProductsSold,
   ActiveCustomer,
-  Product,
-  Customer,
 } from "@/types";
 
-export async function getDashboardStats(): Promise<DashboardStats> {
-  const salesData = await prisma.sale.aggregate({
-    _sum: {
-      total: true,
-    },
-    _count: {
-      id: true,
-    },
-  });
+// Simulação de banco de dados em memória
+let products: Product[] = [
+  { id: 'prod-1', name: 'Laptop Pro X2', price: 7500.00, stock: 50 },
+  { id: 'prod-2', name: 'Monitor Gamer 4K', price: 2800.00, stock: 30 },
+  { id: 'prod-3', name: 'Teclado Mecânico RGB', price: 450.50, stock: 100 },
+  { id: 'prod-4', name: 'Mouse Sem Fio Ergonômico', price: 199.90, stock: 150 },
+  { id: 'prod-5', name: 'Webcam Full HD', price: 350.00, stock: 80 },
+];
 
-  const activeProducts = await prisma.product.count();
-  const uniqueCustomers = (await prisma.sale.findMany({
-    distinct: ['customerId']
-  })).length;
+let customers: Customer[] = [
+  { id: 'cust-1', name: 'Tech Solutions Ltda', email: 'contato@techsolutions.com' },
+  { id: 'cust-2', name: 'Inova Corp', email: 'compras@inovacorp.com' },
+  { id: 'cust-3', name: 'Mercado Digital ABC', email: 'financeiro@mercadoabc.com' },
+];
+
+let sales: Sale[] = [
+    { id: 'sale-1', customerId: 'cust-1', date: new Date('2024-05-10T10:00:00Z'), total: 10300.00 },
+    { id: 'sale-2', customerId: 'cust-2', date: new Date('2024-05-15T14:30:00Z'), total: 649.50 },
+    { id: 'sale-3', customerId: 'cust-1', date: new Date('2024-06-02T11:20:00Z'), total: 2800.00 },
+    { id: 'sale-4', customerId: 'cust-3', date: new Date('2024-07-20T09:05:00Z'), total: 199.90 },
+];
+
+let saleItems: SaleItem[] = [
+    { saleId: 'sale-1', productId: 'prod-1', quantity: 1, price: 7500.00 },
+    { saleId: 'sale-1', productId: 'prod-2', quantity: 1, price: 2800.00 },
+    { saleId: 'sale-2', productId: 'prod-3', quantity: 1, price: 450.50 },
+    { saleId: 'sale-2', productId: 'prod-4', quantity: 1, price: 199.90 },
+    { saleId: 'sale-3', productId: 'prod-2', quantity: 1, price: 2800.00 },
+    { saleId: 'sale-4', productId: 'prod-4', quantity: 1, price: 199.90 },
+];
+
+// Função auxiliar para gerar IDs
+const generateId = (prefix: string) => `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+export async function getDashboardStats(): Promise<DashboardStats> {
+  const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
+  const totalSales = sales.length;
+  const activeProducts = products.length;
+  const uniqueCustomers = new Set(sales.map(s => s.customerId)).size;
 
   return {
-    totalRevenue: salesData._sum.total ?? 0,
-    totalSales: salesData._count.id,
-    activeProducts: activeProducts,
-    uniqueCustomers: uniqueCustomers,
+    totalRevenue,
+    totalSales,
+    activeProducts,
+    uniqueCustomers,
   };
 }
 
 // --- Produtos CRUD ---
 export async function getProducts(): Promise<Product[]> {
-  return prisma.product.findMany({
-    orderBy: { name: 'asc' }
-  });
+  return [...products].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function createProduct(productData: ProductFormValues): Promise<Product> {
-  return prisma.product.create({
-    data: productData,
-  });
+  const newProduct: Product = {
+    id: generateId('prod'),
+    ...productData,
+  };
+  products.push(newProduct);
+  return newProduct;
 }
 
 export async function updateProduct(productData: Product): Promise<Product> {
-  return prisma.product.update({
-    where: { id: productData.id },
-    data: productData,
-  });
+  const index = products.findIndex((p) => p.id === productData.id);
+  if (index === -1) throw new Error("Produto não encontrado");
+  products[index] = { ...products[index], ...productData };
+  return products[index];
 }
 
 export async function deleteProduct(productId: string): Promise<void> {
-  await prisma.product.delete({
-    where: { id: productId },
-  });
+    const isProductInSale = saleItems.some(item => item.productId === productId);
+    if (isProductInSale) {
+        throw new Error("Não é possível excluir um produto que já está associado a uma venda.");
+    }
+    products = products.filter((p) => p.id !== productId);
 }
 
 // --- Clientes CRUD ---
 export async function getCustomers(): Promise<Customer[]> {
-  return prisma.customer.findMany({
-    orderBy: { name: 'asc' }
-  });
+  return [...customers].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function createCustomer(customerData: CustomerFormValues): Promise<Customer> {
-  return prisma.customer.create({
-    data: customerData,
-  });
+  const newCustomer: Customer = {
+    id: generateId('cust'),
+    ...customerData,
+  };
+  customers.push(newCustomer);
+  return newCustomer;
 }
 
 export async function updateCustomer(customerData: Customer): Promise<Customer> {
-  return prisma.customer.update({
-    where: { id: customerData.id },
-    data: customerData,
-  });
+  const index = customers.findIndex((c) => c.id === customerData.id);
+  if (index === -1) throw new Error("Cliente não encontrado");
+  customers[index] = { ...customers[index], ...customerData };
+  return customers[index];
 }
 
 export async function deleteCustomer(customerId: string): Promise<void> {
-   await prisma.customer.delete({
-    where: { id: customerId },
-  });
+    const isCustomerInSale = sales.some(sale => sale.customerId === customerId);
+    if(isCustomerInSale) {
+        throw new Error("Não é possível excluir um cliente que já possui vendas.");
+    }
+    customers = customers.filter((c) => c.id !== customerId);
 }
 
 // --- Vendas ---
 export async function getSalesWithDetails(): Promise<SaleWithDetails[]> {
-  const sales = await prisma.sale.findMany({
-    orderBy: {
-      date: 'desc'
-    },
-    include: {
-      customer: {
-        select: { id: true, name: true }
-      },
-      items: {
-        include: {
+  const detailedSales = sales.map(sale => {
+    const itemsForSale = saleItems
+      .filter(item => item.saleId === sale.id)
+      .map(item => {
+        const product = products.find(p => p.id === item.productId);
+        return {
+          ...item,
           product: {
-            select: { id: true, name: true }
+            id: product?.id || 'unknown',
+            name: product?.name || 'Produto Desconhecido'
           }
-        }
-      }
-    }
+        };
+      });
+
+    const customer = customers.find(c => c.id === sale.customerId);
+    return {
+      ...sale,
+      customer: {
+        id: customer?.id || 'unknown',
+        name: customer?.name || 'Cliente Desconhecido'
+      },
+      items: itemsForSale
+    };
   });
 
-  // Mapeia para garantir a estrutura de tipo esperada, especialmente para `items`
-  return sales.map(sale => ({
-    ...sale,
-    customer: sale.customer,
-    items: sale.items.map(item => ({
-      ...item,
-      productId: item.productId,
-      quantity: item.quantity,
-      price: item.price,
-      product: {
-        id: item.product.id,
-        name: item.product.name
-      }
-    }))
-  }));
+  return detailedSales.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
-
-export async function createSale(saleData: SaleFormValues): Promise<any> {
-  return prisma.$transaction(async (tx) => {
-    // 1. Validar cliente
-    const customer = await tx.customer.findUnique({
-      where: { id: saleData.customerId },
-    });
+export async function createSale(saleData: SaleFormValues): Promise<Sale> {
+    const customer = customers.find(c => c.id === saleData.customerId);
     if (!customer) {
-      throw new Error("Cliente não encontrado.");
+        throw new Error("Cliente não encontrado.");
     }
 
     let total = 0;
-    const saleItemsData = [];
+    const newSaleItems: SaleItem[] = [];
+    const saleId = generateId('sale');
 
-    // 2. Validar itens, verificar estoque e calcular total
     for (const item of saleData.items) {
-      const product = await tx.product.findUnique({
-        where: { id: item.productId },
-      });
-      if (!product) {
-        throw new Error(`Produto com ID ${item.productId} não encontrado.`);
-      }
-      if (product.stock < item.quantity) {
-        throw new Error(`Estoque insuficiente para o produto: ${product.name}. Disponível: ${product.stock}`);
-      }
-
-      total += product.price * item.quantity;
-      saleItemsData.push({
-        productId: item.productId,
-        quantity: item.quantity,
-        price: product.price, // Usar o preço do DB como fonte da verdade
-      });
+        const product = products.find(p => p.id === item.productId);
+        if (!product) {
+            throw new Error(`Produto com ID ${item.productId} não encontrado.`);
+        }
+        if (product.stock < item.quantity) {
+            throw new Error(`Estoque insuficiente para o produto: ${product.name}. Disponível: ${product.stock}`);
+        }
+        total += product.price * item.quantity;
+        newSaleItems.push({
+            saleId,
+            productId: item.productId,
+            quantity: item.quantity,
+            price: product.price,
+        });
     }
 
-    // 3. Criar a venda
-    const newSale = await tx.sale.create({
-      data: {
+    const newSale: Sale = {
+        id: saleId,
         customerId: saleData.customerId,
+        date: new Date(),
         total,
-        items: {
-          create: saleItemsData,
-        },
-      },
-    });
+    };
     
-    // 4. Deduzir do estoque
+    // Atualizar estoque
     for (const item of saleData.items) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: {
-          stock: {
-            decrement: item.quantity,
-          },
-        },
-      });
+        const productIndex = products.findIndex(p => p.id === item.productId);
+        if (productIndex > -1) {
+            products[productIndex].stock -= item.quantity;
+        }
     }
 
+    sales.push(newSale);
+    saleItems.push(...newSaleItems);
+    
     return newSale;
-  });
 }
+
 
 // --- Funções de Análise ---
 
 export async function getSalesByMonth(): Promise<SalesByMonth[]> {
-    const sales = await prisma.sale.findMany({
-        select: {
-            date: true,
-            total: true,
-        },
-    });
-
     const salesByMonth: { [key: number]: number } = {};
 
     sales.forEach(sale => {
@@ -217,63 +222,47 @@ export async function getSalesByMonth(): Promise<SalesByMonth[]> {
     })).filter(d => d.total > 0);
 }
 
+
 export async function getTopProductsSold(): Promise<ProductsSold[]> {
-    const result = await prisma.saleItem.groupBy({
-        by: ['productId'],
-        _sum: {
-            quantity: true,
-        },
-        orderBy: {
-            _sum: {
-                quantity: 'desc'
-            }
-        },
-        take: 5
-    });
+    const productCount: { [key: string]: number } = {};
 
-    const products = await prisma.product.findMany({
-        where: {
-            id: {
-                in: result.map(r => r.productId)
-            }
+    saleItems.forEach(item => {
+        if (!productCount[item.productId]) {
+            productCount[item.productId] = 0;
         }
+        productCount[item.productId] += item.quantity;
     });
 
-    const productMap = new Map(products.map(p => [p.id, p.name]));
-
-    return result.map(item => ({
-        productName: productMap.get(item.productId) || 'Desconhecido',
-        quantity: item._sum.quantity || 0
-    }));
+    return Object.entries(productCount)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5)
+        .map(([productId, quantity]) => {
+            const product = products.find(p => p.id === productId);
+            return {
+                productName: product?.name || 'Desconhecido',
+                quantity,
+            };
+        });
 }
 
-
 export async function getTopActiveCustomers(): Promise<ActiveCustomer[]> {
-    const result = await prisma.sale.groupBy({
-        by: ['customerId'],
-        _count: {
-            _all: true
-        },
-        orderBy: {
-            _count: {
-                id: 'desc'
-            }
-        },
-        take: 5
-    });
+    const customerCount: { [key: string]: number } = {};
 
-    const customers = await prisma.customer.findMany({
-        where: {
-            id: {
-                in: result.map(r => r.customerId)
-            }
+    sales.forEach(sale => {
+        if (!customerCount[sale.customerId]) {
+            customerCount[sale.customerId] = 0;
         }
+        customerCount[sale.customerId]++;
     });
-    
-    const customerMap = new Map(customers.map(c => [c.id, c.name]));
 
-    return result.map(item => ({
-        customerName: customerMap.get(item.customerId) || 'Desconhecido',
-        purchaseCount: item._count._all
-    }));
+    return Object.entries(customerCount)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5)
+        .map(([customerId, count]) => {
+            const customer = customers.find(c => c.id === customerId);
+            return {
+                customerName: customer?.name || 'Desconhecido',
+                purchaseCount: count,
+            };
+        });
 }
