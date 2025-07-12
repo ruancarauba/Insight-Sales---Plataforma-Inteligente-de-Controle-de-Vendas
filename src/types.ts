@@ -36,6 +36,19 @@ export interface DashboardStats {
   uniqueCustomers: number;
 }
 
+// --- Tipos para Análise ---
+
+export interface SalesByMonth {
+    month: string;
+    total: number;
+}
+
+export interface ProductsSold {
+    productName: string;
+    quantity: number;
+}
+
+
 // --- Tipos para Visualização (com dados aninhados) ---
 export interface SaleWithDetails extends Omit<Sale, 'items' | 'customerId'> {
     customer: { id: string; name: string };

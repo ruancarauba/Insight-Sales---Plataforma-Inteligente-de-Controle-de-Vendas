@@ -7,6 +7,8 @@ import type {
   CustomerFormValues,
   SaleFormValues,
   SaleWithDetails,
+  SalesByMonth,
+  ProductsSold,
 } from "@/types";
 
 // Simulação de um banco de dados em memória
@@ -41,6 +43,25 @@ let sales: Sale[] = [
     date: new Date("2024-05-02T14:30:00Z"),
     items: [{ productId: "prod-003", quantity: 5, price: 450.0 }],
     total: 2250.0,
+  },
+   {
+    id: "sale-04",
+    customerId: "cust-03",
+    date: new Date("2024-06-15T09:00:00Z"),
+    items: [
+      { productId: "prod-001", quantity: 1, price: 6500.0 },
+    ],
+    total: 6500.0,
+  },
+  {
+    id: "sale-05",
+    customerId: "cust-01",
+    date: new Date("2024-07-20T18:00:00Z"),
+    items: [
+      { productId: "prod-002", quantity: 10, price: 180.0 },
+      { productId: "prod-003", quantity: 2, price: 450.0 },
+    ],
+    total: 2700.0,
   },
   {
     id: "sale-03",
@@ -212,4 +233,52 @@ export async function createSale(saleData: SaleFormValues): Promise<Sale> {
 
   sales.push(newSale);
   return newSale;
+}
+
+
+// --- Funções de Análise ---
+
+export async function getSalesByMonth(): Promise<SalesByMonth[]> {
+    await simulateDelay();
+    const salesByMonth: { [key: string]: number } = {};
+
+    sales.forEach(sale => {
+        const month = new Date(sale.date).toLocaleString('default', { month: 'short' });
+        if (!salesByMonth[month]) {
+            salesByMonth[month] = 0;
+        }
+        salesByMonth[month] += sale.total;
+    });
+
+    const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    return monthOrder.map(month => ({
+        month,
+        total: salesByMonth[month] || 0,
+    })).filter(d => d.total > 0);
+}
+
+export async function getTopProductsSold(): Promise<ProductsSold[]> {
+    await simulateDelay();
+    const productCount: { [key: string]: number } = {};
+
+    sales.forEach(sale => {
+        sale.items.forEach(item => {
+            if (!productCount[item.productId]) {
+                productCount[item.productId] = 0;
+            }
+            productCount[item.productId] += item.quantity;
+        });
+    });
+
+    return Object.entries(productCount)
+        .map(([productId, quantity]) => {
+            const product = products.find(p => p.id === productId);
+            return {
+                productName: product ? product.name : 'Desconhecido',
+                quantity,
+            };
+        })
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 5); // Retorna os 5 mais vendidos
 }
