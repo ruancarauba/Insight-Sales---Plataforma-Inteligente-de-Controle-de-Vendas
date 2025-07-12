@@ -97,7 +97,7 @@ export function CustomersList() {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Falha ao excluir o cliente.",
+        description: "Falha ao excluir o cliente. Verifique se ele não possui vendas associadas.",
       });
     }
   };

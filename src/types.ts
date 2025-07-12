@@ -1,33 +1,12 @@
 import { z } from "zod";
+import type { Product as PrismaProduct, Customer as PrismaCustomer, Sale as PrismaSale, SaleItem as PrismaSaleItem } from "@prisma/client";
 
-// --- Modelos de Dados ---
+// --- Modelos de Dados (Exportando tipos do Prisma) ---
 
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-}
-
-export interface Customer {
-  id: string;
-  name: string;
-  email: string;
-}
-
-export interface SaleItem {
-  productId: string;
-  quantity: number;
-  price: number; // Preço no momento da venda
-}
-
-export interface Sale {
-  id:string;
-  customerId: string;
-  date: Date;
-  items: SaleItem[];
-  total: number;
-}
+export type Product = PrismaProduct;
+export type Customer = PrismaCustomer;
+export type Sale = PrismaSale;
+export type SaleItem = PrismaSaleItem;
 
 export interface DashboardStats {
   totalRevenue: number;
@@ -55,7 +34,7 @@ export interface ActiveCustomer {
 
 
 // --- Tipos para Visualização (com dados aninhados) ---
-export interface SaleWithDetails extends Omit<Sale, 'items' | 'customerId'> {
+export interface SaleWithDetails extends Sale {
     customer: { id: string; name: string };
     items: (SaleItem & { product: {id: string, name: string} })[];
 }

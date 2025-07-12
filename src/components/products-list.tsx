@@ -99,7 +99,7 @@ export function ProductsList() {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Falha ao excluir o produto.",
+        description: "Falha ao excluir o produto. Verifique se ele não está associado a nenhuma venda.",
       });
     }
   };
@@ -233,7 +233,9 @@ export function ProductsList() {
                   <FormItem>
                     <FormLabel>Preço (R$)</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" {...field} />
+                      <Input type="number" step="0.01" {...field} 
+                         onChange={e => field.onChange(e.target.valueAsNumber)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -246,7 +248,9 @@ export function ProductsList() {
                   <FormItem>
                     <FormLabel>Estoque</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" {...field} 
+                        onChange={e => field.onChange(e.target.valueAsNumber)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

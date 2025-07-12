@@ -1,7 +1,6 @@
+import { Prisma } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import type {
-  Sale,
-  Product,
-  Customer,
   DashboardStats,
   ProductFormValues,
   CustomerFormValues,
@@ -10,299 +9,268 @@ import type {
   SalesByMonth,
   ProductsSold,
   ActiveCustomer,
+  Product,
+  Customer,
 } from "@/types";
 
-// Simulação de um banco de dados em memória
-let products: Product[] = [
-  { id: "prod-001", name: "Laptop Pro X1", price: 6500.0, stock: 15 },
-  { id: "prod-002", name: "Mouse Sem Fio Ergo", price: 180.0, stock: 45 },
-  { id: "prod-003", name: "Teclado Mecânico RGB", price: 450.0, stock: 30 },
-  { id: "prod-004", name: 'Monitor Ultrawide 34"', price: 2800.0, stock: 10 },
-  { id: "prod-005", name: "Webcam 4K", price: 950.0, stock: 22 },
-];
-
-let customers: Customer[] = [
-  { id: "cust-01", name: "Empresa Alfa", email: "contato@alfa.com" },
-  { id: "cust-02", name: "Serviços Beta", email: "financeiro@beta.co" },
-  { id: "cust-03", name: "Gama Soluções", email: "compras@gama.dev" },
-];
-
-let sales: Sale[] = [
-  {
-    id: "sale-01",
-    customerId: "cust-01",
-    date: new Date("2024-05-01T10:00:00Z"),
-    items: [
-      { productId: "prod-001", quantity: 2, price: 6500.0 },
-      { productId: "prod-002", quantity: 2, price: 180.0 },
-    ],
-    total: 13360.0,
-  },
-  {
-    id: "sale-02",
-    customerId: "cust-02",
-    date: new Date("2024-05-02T14:30:00Z"),
-    items: [{ productId: "prod-003", quantity: 5, price: 450.0 }],
-    total: 2250.0,
-  },
-   {
-    id: "sale-04",
-    customerId: "cust-03",
-    date: new Date("2024-06-15T09:00:00Z"),
-    items: [
-      { productId: "prod-001", quantity: 1, price: 6500.0 },
-    ],
-    total: 6500.0,
-  },
-  {
-    id: "sale-05",
-    customerId: "cust-01",
-    date: new Date("2024-07-20T18:00:00Z"),
-    items: [
-      { productId: "prod-002", quantity: 10, price: 180.0 },
-      { productId: "prod-003", quantity: 2, price: 450.0 },
-    ],
-    total: 2700.0,
-  },
-  {
-    id: "sale-03",
-    customerId: "cust-01",
-    date: new Date("2024-05-03T11:20:00Z"),
-    items: [
-      { productId: "prod-004", quantity: 1, price: 2800.0 },
-      { productId: "prod-005", quantity: 1, price: 950.0 },
-    ],
-    total: 3750.0,
-  },
-];
-
-const simulateDelay = () => new Promise((resolve) => setTimeout(resolve, 300));
-
-// --- Funções do Serviço ---
-
 export async function getDashboardStats(): Promise<DashboardStats> {
-  await simulateDelay();
-  const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
-  const totalSales = sales.length;
-  const activeProducts = products.length;
-  const uniqueCustomers = new Set(sales.map((s) => s.customerId)).size;
-  return { totalRevenue, totalSales, activeProducts, uniqueCustomers };
+  const salesData = await prisma.sale.aggregate({
+    _sum: {
+      total: true,
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const activeProducts = await prisma.product.count();
+  const uniqueCustomers = (await prisma.sale.findMany({
+    distinct: ['customerId']
+  })).length;
+
+  return {
+    totalRevenue: salesData._sum.total ?? 0,
+    totalSales: salesData._count.id,
+    activeProducts: activeProducts,
+    uniqueCustomers: uniqueCustomers,
+  };
 }
 
 // --- Produtos CRUD ---
-
 export async function getProducts(): Promise<Product[]> {
-  await simulateDelay();
-  return [...products];
+  return prisma.product.findMany({
+    orderBy: { name: 'asc' }
+  });
 }
 
-export async function createProduct(
-  productData: ProductFormValues
-): Promise<Product> {
-  await simulateDelay();
-  const newProduct: Product = {
-    id: `prod-${Date.now()}`,
-    ...productData,
-  };
-  products.push(newProduct);
-  return newProduct;
+export async function createProduct(productData: ProductFormValues): Promise<Product> {
+  return prisma.product.create({
+    data: productData,
+  });
 }
 
 export async function updateProduct(productData: Product): Promise<Product> {
-  await simulateDelay();
-  const index = products.findIndex((p) => p.id === productData.id);
-  if (index === -1) throw new Error("Produto não encontrado");
-  products[index] = { ...products[index], ...productData };
-  return products[index];
+  return prisma.product.update({
+    where: { id: productData.id },
+    data: productData,
+  });
 }
 
 export async function deleteProduct(productId: string): Promise<void> {
-  await simulateDelay();
-  const index = products.findIndex((p) => p.id === productId);
-  if (index === -1) throw new Error("Produto não encontrado");
-  products.splice(index, 1);
+  await prisma.product.delete({
+    where: { id: productId },
+  });
 }
 
 // --- Clientes CRUD ---
-
 export async function getCustomers(): Promise<Customer[]> {
-  await simulateDelay();
-  return [...customers];
+  return prisma.customer.findMany({
+    orderBy: { name: 'asc' }
+  });
 }
 
-export async function createCustomer(
-  customerData: CustomerFormValues
-): Promise<Customer> {
-  await simulateDelay();
-  const newCustomer: Customer = {
-    id: `cust-${Date.now()}`,
-    ...customerData,
-  };
-  customers.push(newCustomer);
-  return newCustomer;
+export async function createCustomer(customerData: CustomerFormValues): Promise<Customer> {
+  return prisma.customer.create({
+    data: customerData,
+  });
 }
 
 export async function updateCustomer(customerData: Customer): Promise<Customer> {
-  await simulateDelay();
-  const index = customers.findIndex((c) => c.id === customerData.id);
-  if (index === -1) throw new Error("Cliente não encontrado");
-  customers[index] = { ...customers[index], ...customerData };
-  return customers[index];
+  return prisma.customer.update({
+    where: { id: customerData.id },
+    data: customerData,
+  });
 }
 
 export async function deleteCustomer(customerId: string): Promise<void> {
-  await simulateDelay();
-  const index = customers.findIndex((c) => c.id === customerId);
-  if (index === -1) throw new Error("Cliente não encontrado");
-  customers.splice(index, 1);
+   await prisma.customer.delete({
+    where: { id: customerId },
+  });
 }
 
 // --- Vendas ---
-
 export async function getSalesWithDetails(): Promise<SaleWithDetails[]> {
-  await simulateDelay();
-  return sales
-    .map((sale) => {
-      const customer = customers.find((c) => c.id === sale.customerId);
-      const saleItems = sale.items
-        .map((item) => {
-          const product = products.find((p) => p.id === item.productId);
-          return product
-            ? {
-                ...item,
-                product: {
-                  id: product.id,
-                  name: product.name,
-                },
-              }
-            : null;
-        })
-        .filter((i): i is NonNullable<typeof i> => i !== null);
-
-      return customer
-        ? {
-            ...sale,
-            customer: { id: customer.id, name: customer.name },
-            items: saleItems,
+  const sales = await prisma.sale.findMany({
+    orderBy: {
+      date: 'desc'
+    },
+    include: {
+      customer: {
+        select: { id: true, name: true }
+      },
+      items: {
+        include: {
+          product: {
+            select: { id: true, name: true }
           }
-        : null;
-    })
-    .filter((s): s is NonNullable<typeof s> => s !== null)
-    .sort((a,b) => b.date.getTime() - a.date.getTime()); // Mais recentes primeiro
+        }
+      }
+    }
+  });
+
+  // Mapeia para garantir a estrutura de tipo esperada, especialmente para `items`
+  return sales.map(sale => ({
+    ...sale,
+    customer: sale.customer,
+    items: sale.items.map(item => ({
+      ...item,
+      productId: item.productId,
+      quantity: item.quantity,
+      price: item.price,
+      product: {
+        id: item.product.id,
+        name: item.product.name
+      }
+    }))
+  }));
 }
 
-export async function createSale(saleData: SaleFormValues): Promise<Sale> {
-  await simulateDelay();
 
-  // 1. Validar cliente
-  const customer = customers.find((c) => c.id === saleData.customerId);
-  if (!customer) {
-    throw new Error("Cliente não encontrado.");
-  }
-
-  let total = 0;
-  
-  // 2. Validar itens e calcular total
-  for (const item of saleData.items) {
-    const product = products.find((p) => p.id === item.productId);
-    if (!product) {
-      throw new Error(`Produto com ID ${item.productId} não encontrado.`);
+export async function createSale(saleData: SaleFormValues): Promise<any> {
+  return prisma.$transaction(async (tx) => {
+    // 1. Validar cliente
+    const customer = await tx.customer.findUnique({
+      where: { id: saleData.customerId },
+    });
+    if (!customer) {
+      throw new Error("Cliente não encontrado.");
     }
-    if (product.stock < item.quantity) {
-      throw new Error(`Estoque insuficiente para o produto: ${product.name}. Disponível: ${product.stock}`);
+
+    let total = 0;
+    const saleItemsData = [];
+
+    // 2. Validar itens, verificar estoque e calcular total
+    for (const item of saleData.items) {
+      const product = await tx.product.findUnique({
+        where: { id: item.productId },
+      });
+      if (!product) {
+        throw new Error(`Produto com ID ${item.productId} não encontrado.`);
+      }
+      if (product.stock < item.quantity) {
+        throw new Error(`Estoque insuficiente para o produto: ${product.name}. Disponível: ${product.stock}`);
+      }
+
+      total += product.price * item.quantity;
+      saleItemsData.push({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: product.price, // Usar o preço do DB como fonte da verdade
+      });
     }
-    total += product.price * item.quantity;
-  }
-  
-  // 3. Deduzir do estoque
-  for (const item of saleData.items) {
-     const productIndex = products.findIndex((p) => p.id === item.productId);
-     products[productIndex].stock -= item.quantity;
-  }
 
-  // 4. Criar a venda
-  const newSale: Sale = {
-    id: `sale-${Date.now()}`,
-    customerId: saleData.customerId,
-    date: new Date(),
-    items: saleData.items.map(item => ({
-        ...item,
-        price: products.find(p => p.id === item.productId)?.price || 0
-    })),
-    total,
-  };
+    // 3. Criar a venda
+    const newSale = await tx.sale.create({
+      data: {
+        customerId: saleData.customerId,
+        total,
+        items: {
+          create: saleItemsData,
+        },
+      },
+    });
+    
+    // 4. Deduzir do estoque
+    for (const item of saleData.items) {
+      await tx.product.update({
+        where: { id: item.productId },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
+      });
+    }
 
-  sales.push(newSale);
-  return newSale;
+    return newSale;
+  });
 }
-
 
 // --- Funções de Análise ---
 
 export async function getSalesByMonth(): Promise<SalesByMonth[]> {
-    await simulateDelay();
-    const salesByMonth: { [key: string]: number } = {};
+    const sales = await prisma.sale.findMany({
+        select: {
+            date: true,
+            total: true,
+        },
+    });
+
+    const salesByMonth: { [key: number]: number } = {};
 
     sales.forEach(sale => {
-        const month = new Date(sale.date).toLocaleString('pt-BR', { month: 'short' });
+        const month = new Date(sale.date).getMonth();
         if (!salesByMonth[month]) {
             salesByMonth[month] = 0;
         }
         salesByMonth[month] += sale.total;
     });
 
-    const monthOrder = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+    const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
     
-    return monthOrder.map(month => ({
-        month: month.charAt(0).toUpperCase() + month.slice(1),
-        total: salesByMonth[month] || 0,
+    return monthNames.map((name, index) => ({
+        month: name,
+        total: salesByMonth[index] || 0,
     })).filter(d => d.total > 0);
 }
 
 export async function getTopProductsSold(): Promise<ProductsSold[]> {
-    await simulateDelay();
-    const productCount: { [key: string]: number } = {};
-
-    sales.forEach(sale => {
-        sale.items.forEach(item => {
-            if (!productCount[item.productId]) {
-                productCount[item.productId] = 0;
+    const result = await prisma.saleItem.groupBy({
+        by: ['productId'],
+        _sum: {
+            quantity: true,
+        },
+        orderBy: {
+            _sum: {
+                quantity: 'desc'
             }
-            productCount[item.productId] += item.quantity;
-        });
+        },
+        take: 5
     });
 
-    return Object.entries(productCount)
-        .map(([productId, quantity]) => {
-            const product = products.find(p => p.id === productId);
-            return {
-                productName: product ? product.name : 'Desconhecido',
-                quantity,
-            };
-        })
-        .sort((a, b) => b.quantity - a.quantity)
-        .slice(0, 5); // Retorna os 5 mais vendidos
+    const products = await prisma.product.findMany({
+        where: {
+            id: {
+                in: result.map(r => r.productId)
+            }
+        }
+    });
+
+    const productMap = new Map(products.map(p => [p.id, p.name]));
+
+    return result.map(item => ({
+        productName: productMap.get(item.productId) || 'Desconhecido',
+        quantity: item._sum.quantity || 0
+    }));
 }
 
-export async function getTopActiveCustomers(): Promise<ActiveCustomer[]> {
-    await simulateDelay();
-    const customerCount: { [key: string]: number } = {};
 
-    sales.forEach(sale => {
-        if (!customerCount[sale.customerId]) {
-            customerCount[sale.customerId] = 0;
-        }
-        customerCount[sale.customerId]++;
+export async function getTopActiveCustomers(): Promise<ActiveCustomer[]> {
+    const result = await prisma.sale.groupBy({
+        by: ['customerId'],
+        _count: {
+            _all: true
+        },
+        orderBy: {
+            _count: {
+                id: 'desc'
+            }
+        },
+        take: 5
     });
 
-    return Object.entries(customerCount)
-        .map(([customerId, purchaseCount]) => {
-            const customer = customers.find(c => c.id === customerId);
-            return {
-                customerName: customer ? customer.name : 'Desconhecido',
-                purchaseCount,
-            };
-        })
-        .sort((a, b) => b.purchaseCount - a.purchaseCount)
-        .slice(0, 5); // Retorna os 5 clientes mais ativos
+    const customers = await prisma.customer.findMany({
+        where: {
+            id: {
+                in: result.map(r => r.customerId)
+            }
+        }
+    });
+    
+    const customerMap = new Map(customers.map(c => [c.id, c.name]));
+
+    return result.map(item => ({
+        customerName: customerMap.get(item.customerId) || 'Desconhecido',
+        purchaseCount: item._count._all
+    }));
 }
