@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -29,8 +30,8 @@ export default function AppLayout({ children, pageTitle = "Dashboard" }: { child
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/">
-                <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/'}>
+              <Link href="/dashboard">
+                <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/dashboard'}>
                   <Home />
                   <span>Dashboard</span>
                 </SidebarMenuButton>
