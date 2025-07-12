@@ -9,41 +9,59 @@ import { Bot } from 'lucide-react';
 
 export default function LoginPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <div className="w-full max-w-md mx-auto">
-        <Card>
-          <CardHeader className="space-y-1 text-center">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Bot size={32} className="text-primary" />
-              <h1 className="text-2xl font-bold font-grotesk">Sales Insights Hub</h1>
-            </div>
-            <CardTitle className="text-2xl">Login</CardTitle>
-            <CardDescription>
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
+      <div className="hidden bg-gray-900 lg:flex items-center justify-center text-white flex-col p-8">
+        <div className="flex items-center gap-2 mb-4">
+            <Bot size={48} className="text-primary" />
+            <h1 className="text-4xl font-bold font-grotesk">Sales Insights Hub</h1>
+        </div>
+        <p className="text-center text-muted-foreground">
+            Uma plataforma inteligente para impulsionar suas vendas e estratégias.
+        </p>
+      </div>
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Login</h1>
+            <p className="text-balance text-muted-foreground">
               Digite seu email abaixo para acessar sua conta
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
+            </p>
+          </div>
+          <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@exemplo.com" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@exemplo.com"
+                required
+                defaultValue="demo@insightsales.com"
+              />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input id="password" type="password" />
+              <div className="flex items-center">
+                <Label htmlFor="password">Senha</Label>
+              </div>
+              <Input 
+                id="password" 
+                type="password" 
+                required 
+                defaultValue="123456"
+              />
             </div>
-            <Link href="/dashboard" className="w-full">
-              <Button className="w-full">
-                Login
-              </Button>
+            <Link href="/dashboard">
+                <Button type="submit" className="w-full">
+                 Login
+                </Button>
             </Link>
-            <div className="mt-4 text-center text-sm">
-              Não tem uma conta?{' '}
-              <Link href="/register" className="underline">
-                Registrar
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="mt-4 text-center text-sm">
+            Não tem uma conta?{' '}
+            <Link href="/register" className="underline">
+              Registrar
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
