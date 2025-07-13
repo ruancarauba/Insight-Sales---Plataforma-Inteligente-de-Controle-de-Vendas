@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel - Meu Projeto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container painel">
+        <header>
+            <h1>Minhas Tarefas</h1>
+            <button id="botao-sair">Sair</button>
+        </header>
+
+        <p>Bem-vindo(a), <span id="email-usuario">...</span>!</p>
+
+        <!-- Área para adicionar novas tarefas -->
+        <div class="adicionar-tarefa-container">
+            <input type="text" id="input-nova-tarefa" placeholder="Digite uma nova tarefa">
+            <button id="botao-adicionar-tarefa">Adicionar</button>
+        </div>
+
+        <!-- Lista onde as tarefas serão mostradas -->
+        <ul id="lista-de-tarefas">
+            <!-- As tarefas do Firestore aparecerão aqui -->
+        </ul>
+    </div>
+
+    <!-- Importa o script da página do painel -->
+    <script type="module" src="painel.js"></script>
+</body>
+</html>

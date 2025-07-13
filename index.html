@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Meu Projeto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Formulário de Login -->
+        <div class="form-container" id="login-container">
+            <h1>Entrar</h1>
+            <input type="email" id="login-email" placeholder="Seu email" required>
+            <input type="password" id="login-senha" placeholder="Sua senha" required>
+            <button id="botao-login">Entrar</button>
+            <p>Não tem uma conta? <a href="#" id="link-cadastro">Cadastre-se</a></p>
+        </div>
+
+        <!-- Formulário de Cadastro -->
+        <div class="form-container" id="cadastro-container" style="display: none;">
+            <h1>Criar Conta</h1>
+            <input type="email" id="cadastro-email" placeholder="Seu email" required>
+            <input type="password" id="cadastro-senha" placeholder="Crie uma senha (mín. 6 caracteres)" required>
+            <button id="botao-cadastro">Cadastrar</button>
+            <p>Já tem uma conta? <a href="#" id="link-login">Faça login</a></p>
+        </div>
+
+        <!-- Área para mostrar mensagens de erro ou sucesso -->
+        <p id="mensagem-erro" class="mensagem-erro"></p>
+    </div>
+
+    <!-- Importa o nosso script JavaScript -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+/* Estilos gerais para o corpo da página */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container principal para os formulários e painel */
+.container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.form-container, .painel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espaçamento entre os elementos */
+}
+
+h1 {
+    font-size: 1.5rem;
+    color: #1c1e21;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Estilos para os campos de input */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #dddfe2;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px #e7f3ff;
+}
+
+/* Estilos para os botões */
+button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #1877f2;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #166fe5;
+}
+
+/* Estilos para os links e textos pequenos */
+p {
+    text-align: center;
+    color: #606770;
+}
+
+a {
+    color: #1877f2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Mensagem de erro */
+.mensagem-erro {
+    color: #fa383e;
+    font-size: 0.9rem;
+    text-align: center;
+    min-height: 1.2rem;
+}
+
+/* Estilos específicos para a página do painel */
+.painel header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dddfe2;
+    padding-bottom: 1rem;
+}
+
+.painel header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+.painel header button {
+    width: auto;
+    padding: 0.5rem 1rem;
+    background-color: #e4e6eb;
+    color: #050505;
+    font-size: 0.9rem;
+}
+
+.painel header button:hover {
+    background-color: #d8dbdf;
+}
+
+#email-usuario {
+    font-weight: bold;
+    color: #050505;
+}
+
+/* Estilos para a área de adicionar tarefa */
+.adicionar-tarefa-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.adicionar-tarefa-container button {
+    width: auto;
+    padding: 0 1.5rem;
+    font-size: 1rem;
+}
+
+/* Estilos para a lista de tarefas */
+#lista-de-tarefas {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+#lista-de-tarefas li {
+    background-color: #f7f7f7;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.botao-deletar {
+    background-color: #fa383e;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    width: auto;
+}
+
+.botao-deletar:hover {
+    background-color: #e02c34;
+}
