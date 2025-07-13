@@ -48,3 +48,5 @@ Esse projeto foi pensado para demonstrar minhas habilidades como desenvolvedor j
 3.  Rode o servidor de desenvolvimento com `npm run dev`
 4.  Acesse `http://localhost:9002` no seu navegador.
 # Insight-Sales---Plataforma-Inteligente-de-Controle-de-Vendas
+
+criador: ruan caruaba (testes com o front end firebase)
