@@ -129,7 +129,7 @@ export function ListaVendas() {
           <TableHeader>
             <TableRow>
               <TableHead>Cliente</TableHead>
-              <TableHead>Data</TableHead>
+              <TableHead className="hidden sm:table-cell">Data</TableHead>
               <TableHead>Itens</TableHead>
               <TableHead className="text-right">Total</TableHead>
             </TableRow>
@@ -141,7 +141,7 @@ export function ListaVendas() {
                   <TableCell className="font-medium">
                     {venda.customer.name}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     {new Date(venda.date).toLocaleDateString("pt-BR")}
                   </TableCell>
                   <TableCell>
@@ -213,7 +213,7 @@ export function ListaVendas() {
                     {fields.map((field, index) => (
                       <div
                         key={field.id}
-                        className="flex items-end gap-4 p-4 border rounded-md"
+                        className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto_auto] sm:items-end p-4 border rounded-md"
                       >
                         <FormField
                           control={form.control}
@@ -253,7 +253,7 @@ export function ListaVendas() {
                             <FormItem>
                               <FormLabel>Qtd.</FormLabel>
                               <FormControl>
-                                <Input type="number" {...field} className="w-24" 
+                                <Input type="number" {...field} className="w-full sm:w-24" 
                                    onChange={e => field.onChange(e.target.valueAsNumber)}
                                 />
                               </FormControl>
@@ -266,6 +266,7 @@ export function ListaVendas() {
                             variant="destructive"
                             onClick={() => remove(index)}
                             disabled={fields.length <= 1}
+                            className="w-full sm:w-auto"
                           >
                             Remover
                           </Button>

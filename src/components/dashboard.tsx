@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -84,7 +85,7 @@ export function Dashboard() {
           </CardContent>
         </Card>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-4 lg:grid-cols-7">
         <Card className="col-span-full lg:col-span-4">
           <CardHeader>
             <CardTitle>Vendas Recentes</CardTitle>
