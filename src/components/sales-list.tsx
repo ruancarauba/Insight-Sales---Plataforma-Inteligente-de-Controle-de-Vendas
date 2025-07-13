@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -252,7 +253,9 @@ export function SalesList() {
                             <FormItem>
                               <FormLabel>Qtd.</FormLabel>
                               <FormControl>
-                                <Input type="number" {...field} className="w-24" />
+                                <Input type="number" {...field} className="w-24" 
+                                   onChange={e => field.onChange(e.target.valueAsNumber)}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -295,3 +298,5 @@ export function SalesList() {
     </div>
   );
 }
+
+    

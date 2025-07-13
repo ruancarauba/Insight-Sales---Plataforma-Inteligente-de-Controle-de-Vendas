@@ -204,7 +204,7 @@ export async function createSale(saleData: SaleFormValues): Promise<Sale> {
 // --- Funções de Análise ---
 
 export async function getSalesByMonth(): Promise<SalesByMonth[]> {
-    const salesByMonth: { [key: number]: number } = {};
+    const salesByMonth: { [key: string]: number } = {};
 
     sales.forEach(sale => {
         const month = new Date(sale.date).getMonth();
@@ -266,3 +266,5 @@ export async function getTopActiveCustomers(): Promise<ActiveCustomer[]> {
             };
         });
 }
+
+    

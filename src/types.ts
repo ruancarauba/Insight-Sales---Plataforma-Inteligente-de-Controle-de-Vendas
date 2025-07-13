@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 // --- Modelos de Dados (Simulados) ---
@@ -91,3 +92,5 @@ export const SaleSchema = z.object({
 export type ProductFormValues = z.infer<typeof ProductSchema>;
 export type CustomerFormValues = z.infer<typeof CustomerSchema>;
 export type SaleFormValues = z.infer<typeof SaleSchema>;
+
+    

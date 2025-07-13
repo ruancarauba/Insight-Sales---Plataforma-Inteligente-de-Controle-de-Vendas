@@ -1,3 +1,4 @@
+
 # 📊 Insight Sales
 
 Este projeto é uma aplicação web que desenvolvi para simular um sistema de vendas completo, com foco em organização de dados, experiência do usuário e boas práticas de programação.
@@ -47,3 +48,5 @@ Esse projeto foi pensado para demonstrar minhas habilidades como desenvolvedor j
 2.  Instale as dependências com `npm install`
 3.  Rode o servidor de desenvolvimento com `npm run dev`
 4.  Acesse `http://localhost:9002` no seu navegador.
+
+    
