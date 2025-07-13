@@ -47,3 +47,4 @@ Esse projeto foi pensado para demonstrar minhas habilidades como desenvolvedor j
 2.  Instale as dependências com `npm install`
 3.  Rode o servidor de desenvolvimento com `npm run dev`
 4.  Acesse `http://localhost:9002` no seu navegador.
+# Insight-Sales---Plataforma-Inteligente-de-Controle-de-Vendas
