@@ -9,6 +9,7 @@ import type { EstatisticasDashboard } from "@/types";
 import { VendasRecentes } from "./recent-sales";
 import { CardProdutosVendidos } from "./products-sold-card";
 import { CardClientesAtivos } from "./active-customers-card";
+import { GraficoVendasPorMes } from "./sales-by-month-chart";
 
 export function Dashboard() {
   const [estatisticas, setEstatisticas] = useState<EstatisticasDashboard | null>(null);
@@ -34,7 +35,7 @@ export function Dashboard() {
           <CardContent>
             {estatisticas ? (
               <div className="text-2xl font-bold">
-                R$ {estatisticas.receitaTotal.toLocaleString("pt-BR")}
+                {estatisticas.receitaTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}
               </div>
             ) : (
               <div className="h-8 w-3/4 animate-pulse rounded-md bg-muted"></div>
@@ -96,7 +97,6 @@ export function Dashboard() {
         </Card>
         <div className="col-span-full lg:col-span-3 space-y-4">
             <CardProdutosVendidos />
-            <CardClientesAtivos />
         </div>
       </div>
     </div>

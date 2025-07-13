@@ -57,7 +57,7 @@ export function ListaClientes() {
   const form = useForm<ValoresFormularioCliente>({
     resolver: zodResolver(EsquemaCliente),
     defaultValues: {
-      name: "",
+      nome: "",
       email: "",
     },
   });
@@ -74,7 +74,7 @@ export function ListaClientes() {
   const tratarEditar = (cliente: Cliente) => {
     setClienteEditando(cliente);
     form.reset({
-      name: cliente.name,
+      nome: cliente.nome,
       email: cliente.email,
     });
     setDialogoAberto(true);
@@ -82,7 +82,7 @@ export function ListaClientes() {
 
   const tratarNovo = () => {
     setClienteEditando(null);
-    form.reset({ name: "", email: "" });
+    form.reset({ nome: "", email: "" });
     setDialogoAberto(true);
   };
 
@@ -144,7 +144,7 @@ export function ListaClientes() {
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
-              <TableHead>Email</TableHead>
+              <TableHead className="hidden sm:table-cell">Email</TableHead>
               <TableHead className="w-[80px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -152,8 +152,8 @@ export function ListaClientes() {
             {clientes.length > 0 ? (
               clientes.map((cliente) => (
                 <TableRow key={cliente.id}>
-                  <TableCell className="font-medium">{cliente.name}</TableCell>
-                  <TableCell>{cliente.email}</TableCell>
+                  <TableCell className="font-medium">{cliente.nome}</TableCell>
+                  <TableCell className="hidden sm:table-cell">{cliente.email}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -207,7 +207,7 @@ export function ListaClientes() {
             >
               <FormField
                 control={form.control}
-                name="name"
+                name="nome"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nome do Cliente</FormLabel>
