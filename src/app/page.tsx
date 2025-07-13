@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Bot } from 'lucide-react';
 
-export default function LoginPage() {
+export default function PaginaLogin() {
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
       <div className="hidden bg-gray-900 lg:flex items-center justify-center text-white flex-col p-8">
