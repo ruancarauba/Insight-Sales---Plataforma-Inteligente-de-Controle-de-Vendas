@@ -18,11 +18,11 @@ import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { Button } from "./ui/button";
 
-export default function LayoutAplicacao({ children, tituloPagina = "Dashboard" }: { children: React.ReactNode, tituloPagina?: string }) {
+export default function LayoutAplicacao({ children, pageTitle = "Dashboard" }: { children: React.ReactNode, pageTitle?: string }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full">
       <Sidebar>
         <CabecalhoSidebar>
           <div className="flex items-center gap-2">
@@ -85,21 +85,21 @@ export default function LayoutAplicacao({ children, tituloPagina = "Dashboard" }
         <SeparadorSidebar />
         <RodapeSidebar>
           <Link href="/">
-            <Button variant="ghost" className="w-full justify-start">
-                <LogOut className="mr-2 h-4 w-4" />
+            <Button variant="ghost" className="w-full justify-start gap-2">
+                <LogOut className="h-4 w-4" />
                 <span>Sair</span>
             </Button>
           </Link>
         </RodapeSidebar>
       </Sidebar>
       <LayoutInterno>
-        <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
+        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
           <GatilhoSidebar className="md:hidden" />
           <div className="flex-1">
-            <h1 className="text-lg font-semibold font-grotesk">{tituloPagina}</h1>
+            <h1 className="text-xl font-semibold font-grotesk">{pageTitle}</h1>
           </div>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
       </LayoutInterno>
     </div>
   );

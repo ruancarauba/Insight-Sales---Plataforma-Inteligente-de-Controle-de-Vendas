@@ -1,10 +1,11 @@
+
 "use client"
 
 import * as React from "react"
 import { obterVendasComDetalhes } from "@/services/sales-service"
 import type { VendaComDetalhes } from "@/types"
 import { Skeleton } from "./ui/skeleton"
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { Avatar, AvatarFallback } from "./ui/avatar"
 
 export function VendasRecentes() {
   const [vendas, setVendas] = React.useState<VendaComDetalhes[]>([])
@@ -50,7 +51,7 @@ export function VendasRecentes() {
                 {venda.customer.name}
               </p>
               <p className="text-sm text-muted-foreground">
-                {new Date(venda.date).toLocaleDateString("pt-BR")}
+                {new Date(venda.date).toLocaleDateString("pt-BR", { year: 'numeric', month: 'numeric', day: 'numeric'})}
               </p>
             </div>
             <div className="ml-auto font-medium">
