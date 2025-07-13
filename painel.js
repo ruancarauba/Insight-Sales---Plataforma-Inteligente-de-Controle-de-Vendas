@@ -1,7 +1,7 @@
 // Importa as funções do Firebase que vamos usar
 import { auth, db } from './firebase-config.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, query, where, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { collection, addDoc, query, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 
 // Pega os elementos do HTML que vamos manipular
 const emailUsuarioEl = document.getElementById('email-usuario');

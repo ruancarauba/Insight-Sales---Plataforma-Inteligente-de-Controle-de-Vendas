@@ -4,7 +4,7 @@ import {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword,
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "firebase/auth";
 
 // Pega os elementos do HTML que vamos manipular
 const loginContainer = document.getElementById('login-container');

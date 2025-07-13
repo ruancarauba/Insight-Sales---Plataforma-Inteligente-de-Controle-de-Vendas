@@ -1,18 +1,18 @@
 // Importa as funções que a gente precisa do Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-// ATENÇÃO: Cole aqui as configurações do seu projeto Firebase
-// Você pode encontrar essas configurações no console do Firebase,
-// nas configurações do seu projeto, na seção "SDK Setup and Configuration".
+// Suas credenciais do Firebase que você forneceu
 const firebaseConfig = {
-  apiKey: "COLE_SUA_API_KEY_AQUI",
-  authDomain: "SEU_AUTH_DOMAIN.firebaseapp.com",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_STORAGE_BUCKET.appspot.com",
-  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyDWuRaQL0ACL6WNcxuwx83oi-qyMu-djdU",
+  authDomain: "clima-c44d3.firebaseapp.com",
+  databaseURL: "https://clima-c44d3-default-rtdb.firebaseio.com",
+  projectId: "clima-c44d3",
+  storageBucket: "clima-c44d3.firebasestorage.app",
+  messagingSenderId: "229528756598",
+  appId: "1:229528756598:web:2d1e76c977f0e236151a57",
+  measurementId: "G-VX59KMHTVT"
 };
 
 // Inicializa o Firebase com as nossas configurações
