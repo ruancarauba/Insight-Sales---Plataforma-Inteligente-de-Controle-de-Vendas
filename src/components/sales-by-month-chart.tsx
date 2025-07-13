@@ -7,38 +7,38 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import type { SalesByMonth } from "@/types"
-import { getSalesByMonth } from "@/services/sales-service"
+import type { VendasPorMes } from "@/types"
+import { obterVendasPorMes } from "@/services/sales-service"
 import { Skeleton } from "./ui/skeleton"
 
-const chartConfig = {
+const configGrafico = {
   total: {
     label: "Total",
     color: "hsl(var(--primary))",
   },
 }
 
-export function SalesByMonthChart() {
-    const [chartData, setChartData] = React.useState<SalesByMonth[]>([]);
-    const [loading, setLoading] = React.useState(true);
+export function GraficoVendasPorMes() {
+    const [dadosGrafico, setDadosGrafico] = React.useState<VendasPorMes[]>([]);
+    const [carregando, setCarregando] = React.useState(true);
 
     React.useEffect(() => {
-        async function loadData() {
-            const data = await getSalesByMonth();
-            setChartData(data);
-            setLoading(false);
+        async function carregarDados() {
+            const dados = await obterVendasPorMes();
+            setDadosGrafico(dados);
+            setCarregando(false);
         }
-        loadData();
+        carregarDados();
     }, []);
 
-    if(loading) {
+    if(carregando) {
         return <Skeleton className="h-80 w-full" />
     }
 
   return (
-    <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-80">
+    <ChartContainer config={configGrafico} className="min-h-[200px] w-full h-80">
       <BarChart 
-        data={chartData}
+        data={dadosGrafico}
         margin={{
             top: 20,
             right: 20,
@@ -48,7 +48,7 @@ export function SalesByMonthChart() {
         >
         <CartesianGrid vertical={false} />
         <XAxis
-          dataKey="month"
+          dataKey="mes"
           tickLine={false}
           tickMargin={10}
           axisLine={false}
@@ -58,13 +58,13 @@ export function SalesByMonthChart() {
             fontSize={12}
             tickLine={false}
             axisLine={false}
-            tickFormatter={(value) => `R$${value/1000}k`}
+            tickFormatter={(valor) => `R$${valor/1000}k`}
         />
         <Tooltip 
             cursor={false}
             content={<ChartTooltipContent
-                formatter={(value) =>
-                  value.toLocaleString("pt-BR", {
+                formatter={(valor) =>
+                  valor.toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   })

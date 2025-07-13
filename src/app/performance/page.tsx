@@ -1,14 +1,14 @@
 "use client";
 
-import AppLayout from "@/components/app-layout";
-import { ProductsSoldCard } from "@/components/products-sold-card";
-import { SalesByMonthChart } from "@/components/sales-by-month-chart";
+import LayoutAplicacao from "@/components/app-layout";
+import { CardProdutosVendidos } from "@/components/products-sold-card";
+import { GraficoVendasPorMes } from "@/components/sales-by-month-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ActiveCustomersCard } from "@/components/active-customers-card";
+import { CardClientesAtivos } from "@/components/active-customers-card";
 
-export default function PerformancePage() {
+export default function PaginaDesempenho() {
   return (
-    <AppLayout pageTitle="Análise de Desempenho">
+    <LayoutAplicacao pageTitle="Análise de Desempenho">
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-full lg:col-span-4">
@@ -16,15 +16,15 @@ export default function PerformancePage() {
                     <CardTitle>Vendas por Mês</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                    <SalesByMonthChart />
+                    <GraficoVendasPorMes />
                 </CardContent>
             </Card>
             <div className="col-span-full lg:col-span-3 space-y-4">
-              <ProductsSoldCard />
-              <ActiveCustomersCard />
+              <CardProdutosVendidos />
+              <CardClientesAtivos />
             </div>
         </div>
       </div>
-    </AppLayout>
+    </LayoutAplicacao>
   );
 }

@@ -1,12 +1,12 @@
 
 "use client";
-import AppLayout from "@/components/app-layout";
+import LayoutAplicacao from "@/components/app-layout";
 import { Dashboard } from "@/components/dashboard";
 
-export default function DashboardPage() {
+export default function PaginaDashboard() {
   return (
-    <AppLayout pageTitle="Dashboard">
+    <LayoutAplicacao pageTitle="Dashboard">
       <Dashboard />
-    </AppLayout>
+    </LayoutAplicacao>
   );
 }

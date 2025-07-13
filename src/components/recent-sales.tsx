@@ -1,26 +1,26 @@
 "use client"
 
 import * as React from "react"
-import { getSalesWithDetails } from "@/services/sales-service"
-import type { SaleWithDetails } from "@/types"
+import { obterVendasComDetalhes } from "@/services/sales-service"
+import type { VendaComDetalhes } from "@/types"
 import { Skeleton } from "./ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
-export function RecentSales() {
-  const [sales, setSales] = React.useState<SaleWithDetails[]>([])
-  const [loading, setLoading] = React.useState(true)
+export function VendasRecentes() {
+  const [vendas, setVendas] = React.useState<VendaComDetalhes[]>([])
+  const [carregando, setCarregando] = React.useState(true)
 
   React.useEffect(() => {
-    async function loadData() {
-      const data = await getSalesWithDetails()
+    async function carregarDados() {
+      const dados = await obterVendasComDetalhes()
       // Pegar apenas as 5 vendas mais recentes
-      setSales(data.slice(0, 5))
-      setLoading(false)
+      setVendas(dados.slice(0, 5))
+      setCarregando(false)
     }
-    loadData()
+    carregarDados()
   }, [])
 
-  if (loading) {
+  if (carregando) {
     return (
       <div className="space-y-4">
         {[...Array(5)].map((_, i) => (
@@ -39,22 +39,22 @@ export function RecentSales() {
 
   return (
     <div className="space-y-6">
-      {sales.length > 0 ? (
-        sales.map((sale) => (
-          <div key={sale.id} className="flex items-center">
+      {vendas.length > 0 ? (
+        vendas.map((venda) => (
+          <div key={venda.id} className="flex items-center">
             <Avatar className="h-9 w-9">
-               <AvatarFallback>{sale.customer.name.charAt(0).toUpperCase()}</AvatarFallback>
+               <AvatarFallback>{venda.customer.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="ml-4 space-y-1">
               <p className="text-sm font-medium leading-none">
-                {sale.customer.name}
+                {venda.customer.name}
               </p>
               <p className="text-sm text-muted-foreground">
-                {new Date(sale.date).toLocaleDateString("pt-BR")}
+                {new Date(venda.date).toLocaleDateString("pt-BR")}
               </p>
             </div>
             <div className="ml-auto font-medium">
-                {sale.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}
+                {venda.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}
             </div>
           </div>
         ))

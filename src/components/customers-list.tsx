@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
-  createCustomer,
-  deleteCustomer,
-  getCustomers,
-  updateCustomer,
+  criarCliente,
+  deletarCliente,
+  obterClientes,
+  atualizarCliente,
 } from "@/services/sales-service";
-import type { Customer } from "@/types";
+import type { Cliente } from "@/types";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import {
   Dialog,
@@ -45,55 +45,55 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { CustomerSchema, type CustomerFormValues } from "@/types";
+import { EsquemaCliente, type ValoresFormularioCliente } from "@/types";
 
-export function CustomersList() {
-  const [customers, setCustomers] = React.useState<Customer[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [editingCustomer, setEditingCustomer] =
-    React.useState<Customer | null>(null);
+export function ListaClientes() {
+  const [clientes, setClientes] = React.useState<Cliente[]>([]);
+  const [dialogoAberto, setDialogoAberto] = React.useState(false);
+  const [clienteEditando, setClienteEditando] =
+    React.useState<Cliente | null>(null);
   const { toast } = useToast();
 
-  const form = useForm<CustomerFormValues>({
-    resolver: zodResolver(CustomerSchema),
+  const form = useForm<ValoresFormularioCliente>({
+    resolver: zodResolver(EsquemaCliente),
     defaultValues: {
       name: "",
       email: "",
     },
   });
 
-  const loadCustomers = React.useCallback(async () => {
-    const customersData = await getCustomers();
-    setCustomers(customersData);
+  const carregarClientes = React.useCallback(async () => {
+    const dadosClientes = await obterClientes();
+    setClientes(dadosClientes);
   }, []);
 
   React.useEffect(() => {
-    loadCustomers();
-  }, [loadCustomers]);
+    carregarClientes();
+  }, [carregarClientes]);
 
-  const handleEdit = (customer: Customer) => {
-    setEditingCustomer(customer);
+  const tratarEditar = (cliente: Cliente) => {
+    setClienteEditando(cliente);
     form.reset({
-      name: customer.name,
-      email: customer.email,
+      name: cliente.name,
+      email: cliente.email,
     });
-    setIsDialogOpen(true);
+    setDialogoAberto(true);
   };
 
-  const handleNew = () => {
-    setEditingCustomer(null);
+  const tratarNovo = () => {
+    setClienteEditando(null);
     form.reset({ name: "", email: "" });
-    setIsDialogOpen(true);
+    setDialogoAberto(true);
   };
 
-  const handleDelete = async (customerId: string) => {
+  const tratarDeletar = async (clienteId: string) => {
     try {
-      await deleteCustomer(customerId);
+      await deletarCliente(clienteId);
       toast({
         title: "Sucesso!",
         description: "Cliente excluído com sucesso.",
       });
-      loadCustomers();
+      carregarClientes();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -103,23 +103,23 @@ export function CustomersList() {
     }
   };
 
-  const onSubmit = async (values: CustomerFormValues) => {
+  const aoEnviar = async (valores: ValoresFormularioCliente) => {
     try {
-      if (editingCustomer) {
-        await updateCustomer({ ...values, id: editingCustomer.id });
+      if (clienteEditando) {
+        await atualizarCliente({ ...valores, id: clienteEditando.id });
         toast({
           title: "Sucesso!",
           description: "Cliente atualizado com sucesso.",
         });
       } else {
-        await createCustomer(values);
+        await criarCliente(valores);
         toast({
           title: "Sucesso!",
           description: "Cliente criado com sucesso.",
         });
       }
-      setIsDialogOpen(false);
-      loadCustomers();
+      setDialogoAberto(false);
+      carregarClientes();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -133,7 +133,7 @@ export function CustomersList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Gerenciamento de Clientes</h2>
-        <Button onClick={handleNew}>
+        <Button onClick={tratarNovo}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Adicionar Cliente
         </Button>
@@ -149,11 +149,11 @@ export function CustomersList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.length > 0 ? (
-              customers.map((customer) => (
-                <TableRow key={customer.id}>
-                  <TableCell className="font-medium">{customer.name}</TableCell>
-                  <TableCell>{customer.email}</TableCell>
+            {clientes.length > 0 ? (
+              clientes.map((cliente) => (
+                <TableRow key={cliente.id}>
+                  <TableCell className="font-medium">{cliente.name}</TableCell>
+                  <TableCell>{cliente.email}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -163,11 +163,11 @@ export function CustomersList() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(customer)}>
+                        <DropdownMenuItem onClick={() => tratarEditar(cliente)}>
                           Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleDelete(customer.id)}
+                          onClick={() => tratarDeletar(cliente.id)}
                           className="text-destructive"
                         >
                           Excluir
@@ -188,21 +188,21 @@ export function CustomersList() {
         </Table>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={dialogoAberto} onOpenChange={setDialogoAberto}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              {editingCustomer ? "Editar Cliente" : "Adicionar Cliente"}
+              {clienteEditando ? "Editar Cliente" : "Adicionar Cliente"}
             </DialogTitle>
             <DialogDescription>
-              {editingCustomer
+              {clienteEditando
                 ? "Altere os detalhes do cliente e clique em salvar."
                 : "Preencha os detalhes do novo cliente."}
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(aoEnviar)}
               className="space-y-4 py-4"
             >
               <FormField
@@ -241,5 +241,3 @@ export function CustomersList() {
     </div>
   );
 }
-
-    

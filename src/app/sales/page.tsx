@@ -1,10 +1,10 @@
-import AppLayout from "@/components/app-layout";
-import { SalesList } from "@/components/sales-list";
+import LayoutAplicacao from "@/components/app-layout";
+import { ListaVendas } from "@/components/sales-list";
 
-export default function SalesPage() {
+export default function PaginaVendas() {
   return (
-    <AppLayout pageTitle="Vendas">
-      <SalesList />
-    </AppLayout>
+    <LayoutAplicacao pageTitle="Vendas">
+      <ListaVendas />
+    </LayoutAplicacao>
   );
 }

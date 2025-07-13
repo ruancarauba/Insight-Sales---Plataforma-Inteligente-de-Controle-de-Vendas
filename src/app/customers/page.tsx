@@ -1,10 +1,10 @@
-import AppLayout from "@/components/app-layout";
-import { CustomersList } from "@/components/customers-list";
+import LayoutAplicacao from "@/components/app-layout";
+import { ListaClientes } from "@/components/customers-list";
 
-export default function CustomersPage() {
+export default function PaginaClientes() {
   return (
-    <AppLayout pageTitle="Clientes">
-      <CustomersList />
-    </AppLayout>
+    <LayoutAplicacao pageTitle="Clientes">
+      <ListaClientes />
+    </LayoutAplicacao>
   );
 }

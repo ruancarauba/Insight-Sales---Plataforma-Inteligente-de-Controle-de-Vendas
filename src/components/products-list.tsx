@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
-  createProduct,
-  deleteProduct,
-  getProducts,
-  updateProduct,
+  criarProduto,
+  deletarProduto,
+  obterProdutos,
+  atualizarProduto,
 } from "@/services/sales-service";
-import type { Product } from "@/types";
+import type { Produto } from "@/types";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import {
   Dialog,
@@ -45,17 +45,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ProductSchema, type ProductFormValues } from "@/types";
+import { EsquemaProduto, type ValoresFormularioProduto } from "@/types";
 
-export function ProductsList() {
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [editingProduct, setEditingProduct] =
-    React.useState<Product | null>(null);
+export function ListaProdutos() {
+  const [produtos, setProdutos] = React.useState<Produto[]>([]);
+  const [dialogoAberto, setDialogoAberto] = React.useState(false);
+  const [produtoEditando, setProdutoEditando] =
+    React.useState<Produto | null>(null);
   const { toast } = useToast();
 
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(ProductSchema),
+  const form = useForm<ValoresFormularioProduto>({
+    resolver: zodResolver(EsquemaProduto),
     defaultValues: {
       name: "",
       price: 0,
@@ -63,39 +63,39 @@ export function ProductsList() {
     },
   });
 
-  const loadProducts = React.useCallback(async () => {
-    const productsData = await getProducts();
-    setProducts(productsData);
+  const carregarProdutos = React.useCallback(async () => {
+    const dadosProdutos = await obterProdutos();
+    setProdutos(dadosProdutos);
   }, []);
 
   React.useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+    carregarProdutos();
+  }, [carregarProdutos]);
 
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
+  const tratarEditar = (produto: Produto) => {
+    setProdutoEditando(produto);
     form.reset({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
+      name: produto.name,
+      price: produto.price,
+      stock: produto.stock,
     });
-    setIsDialogOpen(true);
+    setDialogoAberto(true);
   };
 
-  const handleNew = () => {
-    setEditingProduct(null);
+  const tratarNovo = () => {
+    setProdutoEditando(null);
     form.reset({ name: "", price: 0, stock: 0 });
-    setIsDialogOpen(true);
+    setDialogoAberto(true);
   };
 
-  const handleDelete = async (productId: string) => {
+  const tratarDeletar = async (produtoId: string) => {
     try {
-      await deleteProduct(productId);
+      await deletarProduto(produtoId);
       toast({
         title: "Sucesso!",
         description: "Produto excluído com sucesso.",
       });
-      loadProducts();
+      carregarProdutos();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -105,23 +105,23 @@ export function ProductsList() {
     }
   };
 
-  const onSubmit = async (values: ProductFormValues) => {
+  const aoEnviar = async (valores: ValoresFormularioProduto) => {
     try {
-      if (editingProduct) {
-        await updateProduct({ ...values, id: editingProduct.id });
+      if (produtoEditando) {
+        await atualizarProduto({ ...valores, id: produtoEditando.id });
         toast({
           title: "Sucesso!",
           description: "Produto atualizado com sucesso.",
         });
       } else {
-        await createProduct(values);
+        await criarProduto(valores);
         toast({
           title: "Sucesso!",
           description: "Produto criado com sucesso.",
         });
       }
-      setIsDialogOpen(false);
-      loadProducts();
+      setDialogoAberto(false);
+      carregarProdutos();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -135,7 +135,7 @@ export function ProductsList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Gerenciamento de Produtos</h2>
-        <Button onClick={handleNew}>
+        <Button onClick={tratarNovo}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Adicionar Produto
         </Button>
@@ -152,17 +152,17 @@ export function ProductsList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.length > 0 ? (
-              products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.name}</TableCell>
+            {produtos.length > 0 ? (
+              produtos.map((produto) => (
+                <TableRow key={produto.id}>
+                  <TableCell className="font-medium">{produto.name}</TableCell>
                   <TableCell>
-                    {product.price.toLocaleString("pt-BR", {
+                    {produto.price.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </TableCell>
-                  <TableCell>{product.stock}</TableCell>
+                  <TableCell>{produto.stock}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -172,11 +172,11 @@ export function ProductsList() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(product)}>
+                        <DropdownMenuItem onClick={() => tratarEditar(produto)}>
                           Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() => tratarDeletar(produto.id)}
                           className="text-destructive"
                         >
                           Excluir
@@ -197,21 +197,21 @@ export function ProductsList() {
         </Table>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={dialogoAberto} onOpenChange={setDialogoAberto}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              {editingProduct ? "Editar Produto" : "Adicionar Produto"}
+              {produtoEditando ? "Editar Produto" : "Adicionar Produto"}
             </DialogTitle>
             <DialogDescription>
-              {editingProduct
+              {produtoEditando
                 ? "Altere os detalhes do produto e clique em salvar."
                 : "Preencha os detalhes do novo produto."}
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(aoEnviar)}
               className="space-y-4 py-4"
             >
               <FormField
@@ -267,5 +267,3 @@ export function ProductsList() {
     </div>
   );
 }
-
-    

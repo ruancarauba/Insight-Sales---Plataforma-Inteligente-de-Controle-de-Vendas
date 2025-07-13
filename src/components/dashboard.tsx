@@ -3,20 +3,21 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
-import { getDashboardStats } from "@/services/sales-service";
-import type { DashboardStats } from "@/types";
-import { SalesByMonthChart } from "./sales-by-month-chart";
-import { RecentSales } from "./recent-sales";
+import { obterEstatisticasDashboard } from "@/services/sales-service";
+import type { EstatisticasDashboard } from "@/types";
+import { VendasRecentes } from "./recent-sales";
+import { CardProdutosVendidos } from "./products-sold-card";
+import { CardClientesAtivos } from "./active-customers-card";
 
 export function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [estatisticas, setEstatisticas] = useState<EstatisticasDashboard | null>(null);
 
   useEffect(() => {
-    async function loadStats() {
-      const data = await getDashboardStats();
-      setStats(data);
+    async function carregarEstatisticas() {
+      const dados = await obterEstatisticasDashboard();
+      setEstatisticas(dados);
     }
-    loadStats();
+    carregarEstatisticas();
   }, []);
 
   return (
@@ -30,9 +31,9 @@ export function Dashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {stats ? (
+            {estatisticas ? (
               <div className="text-2xl font-bold">
-                R$ {stats.totalRevenue.toLocaleString("pt-BR")}
+                R$ {estatisticas.receitaTotal.toLocaleString("pt-BR")}
               </div>
             ) : (
               <div className="h-8 w-3/4 animate-pulse rounded-md bg-muted"></div>
@@ -45,8 +46,8 @@ export function Dashboard() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {stats ? (
-              <div className="text-2xl font-bold">+{stats.totalSales}</div>
+            {estatisticas ? (
+              <div className="text-2xl font-bold">+{estatisticas.totalVendas}</div>
             ) : (
               <div className="h-8 w-1/2 animate-pulse rounded-md bg-muted"></div>
             )}
@@ -60,8 +61,8 @@ export function Dashboard() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {stats ? (
-              <div className="text-2xl font-bold">{stats.activeProducts}</div>
+            {estatisticas ? (
+              <div className="text-2xl font-bold">{estatisticas.produtosAtivos}</div>
             ) : (
               <div className="h-8 w-1/4 animate-pulse rounded-md bg-muted"></div>
             )}
@@ -75,8 +76,8 @@ export function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {stats ? (
-              <div className="text-2xl font-bold">{stats.uniqueCustomers}</div>
+            {estatisticas ? (
+              <div className="text-2xl font-bold">{estatisticas.clientesUnicos}</div>
             ) : (
               <div className="h-8 w-1/4 animate-pulse rounded-md bg-muted"></div>
             )}
@@ -86,20 +87,16 @@ export function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-full lg:col-span-4">
           <CardHeader>
-            <CardTitle>Vendas por Mês</CardTitle>
-          </CardHeader>
-          <CardContent className="pl-2">
-             <SalesByMonthChart />
-          </CardContent>
-        </Card>
-        <Card className="col-span-full lg:col-span-3">
-          <CardHeader>
             <CardTitle>Vendas Recentes</CardTitle>
           </CardHeader>
           <CardContent>
-            <RecentSales />
+            <VendasRecentes />
           </CardContent>
         </Card>
+        <div className="col-span-full lg:col-span-3 space-y-4">
+            <CardProdutosVendidos />
+            <CardClientesAtivos />
+        </div>
       </div>
     </div>
   );

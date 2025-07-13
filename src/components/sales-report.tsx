@@ -10,21 +10,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { generateSalesReport, type SalesReportOutput } from "@/ai/flows/sales-report-flow";
+import { gerarRelatorioVendas, type SaidaRelatorioVendas } from "@/ai/flows/sales-report-flow";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "./ui/skeleton";
 import { Lightbulb, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react";
 
-const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const nomesMeses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
-export function SalesReport() {
-  const [selectedMonth, setSelectedMonth] = React.useState<string | undefined>(undefined);
-  const [report, setReport] = React.useState<SalesReportOutput | null>(null);
-  const [loading, setLoading] = React.useState(false);
+export function RelatorioVendas() {
+  const [mesSelecionado, setMesSelecionado] = React.useState<string | undefined>(undefined);
+  const [relatorio, setRelatorio] = React.useState<SaidaRelatorioVendas | null>(null);
+  const [carregando, setCarregando] = React.useState(false);
   const { toast } = useToast();
 
-  const handleGenerateReport = async () => {
-    if (!selectedMonth) {
+  const tratarGerarRelatorio = async () => {
+    if (!mesSelecionado) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -33,11 +33,11 @@ export function SalesReport() {
       return;
     }
     
-    setLoading(true);
-    setReport(null);
+    setCarregando(true);
+    setRelatorio(null);
     try {
-      const result = await generateSalesReport({ month: selectedMonth });
-      setReport(result);
+      const resultado = await gerarRelatorioVendas({ mes: mesSelecionado });
+      setRelatorio(resultado);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -46,7 +46,7 @@ export function SalesReport() {
       });
       console.error(error);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
@@ -60,25 +60,25 @@ export function SalesReport() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex items-center gap-4">
-          <Select onValueChange={setSelectedMonth} value={selectedMonth}>
+          <Select onValueChange={setMesSelecionado} value={mesSelecionado}>
             <SelectTrigger className="w-[280px]">
               <SelectValue placeholder="Selecione um mês" />
             </SelectTrigger>
             <SelectContent>
-              {monthNames.map((month) => (
-                <SelectItem key={month} value={month}>
-                  {month}
+              {nomesMeses.map((mes) => (
+                <SelectItem key={mes} value={mes}>
+                  {mes}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={handleGenerateReport} disabled={loading || !selectedMonth}>
-            {loading ? "Gerando..." : "Gerar Relatório"}
+          <Button onClick={tratarGerarRelatorio} disabled={carregando || !mesSelecionado}>
+            {carregando ? "Gerando..." : "Gerar Relatório"}
           </Button>
         </CardContent>
       </Card>
 
-      {loading && (
+      {carregando && (
         <Card>
             <CardHeader>
                 <Skeleton className="h-8 w-1/2" />
@@ -91,35 +91,35 @@ export function SalesReport() {
         </Card>
       )}
 
-      {report && (
+      {relatorio && (
         <Card>
           <CardHeader>
-            <CardTitle>Análise de Vendas - {selectedMonth}</CardTitle>
+            <CardTitle>Análise de Vendas - {mesSelecionado}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 prose prose-sm max-w-none dark:prose-invert">
             <div>
               <h3 className="flex items-center gap-2 font-semibold"><Lightbulb className="text-primary"/>Resumo Executivo</h3>
-              <p>{report.executiveSummary}</p>
+              <p>{relatorio.resumoExecutivo}</p>
             </div>
             
             <div>
               <h3 className="flex items-center gap-2 font-semibold"><TrendingUp className="text-green-500" />Pontos Fortes</h3>
               <ul className="list-disc pl-5 space-y-2">
-                {report.strengths.map((item, index) => <li key={index}>{item}</li>)}
+                {relatorio.pontosFortes.map((item, index) => <li key={index}>{item}</li>)}
               </ul>
             </div>
 
             <div>
               <h3 className="flex items-center gap-2 font-semibold"><AlertTriangle className="text-yellow-500" />Pontos de Melhoria</h3>
               <ul className="list-disc pl-5 space-y-2">
-                {report.areasForImprovement.map((item, index) => <li key={index}>{item}</li>)}
+                {relatorio.areasParaMelhoria.map((item, index) => <li key={index}>{item}</li>)}
               </ul>
             </div>
 
             <div>
               <h3 className="flex items-center gap-2 font-semibold"><CheckCircle className="text-blue-500" />Recomendações</h3>
                <ul className="list-disc pl-5 space-y-2">
-                {report.recommendations.map((item, index) => <li key={index}>{item}</li>)}
+                {relatorio.recomendacoes.map((item, index) => <li key={index}>{item}</li>)}
               </ul>
             </div>
           </CardContent>

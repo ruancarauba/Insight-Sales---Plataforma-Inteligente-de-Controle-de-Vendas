@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { ProvedorSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "Sistema de controle de vendas e análise de desempenho.",
 };
 
-export default function RootLayout({
+export default function LayoutRaiz({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -21,9 +21,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={cn(inter.variable, spaceGrotesk.variable)}>
       <body className="font-sans antialiased">
-        <SidebarProvider>
+        <ProvedorSidebar>
           {children}
-        </SidebarProvider>
+        </ProvedorSidebar>
         <Toaster />
       </body>
     </html>

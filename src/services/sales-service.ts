@@ -2,22 +2,22 @@
 "use server";
 
 import type {
-  DashboardStats,
-  Product,
-  ProductFormValues,
-  Customer,
-  CustomerFormValues,
-  Sale,
-  SaleItem,
-  SaleFormValues,
-  SaleWithDetails,
-  SalesByMonth,
-  ProductsSold,
-  ActiveCustomer,
+  EstatisticasDashboard,
+  Produto,
+  ValoresFormularioProduto,
+  Cliente,
+  ValoresFormularioCliente,
+  Venda,
+  ItemVenda,
+  ValoresFormularioVenda,
+  VendaComDetalhes,
+  VendasPorMes,
+  ProdutoVendido,
+  ClienteAtivo,
 } from "@/types";
 
 // Simulação de banco de dados em memória
-let products: Product[] = [
+let produtos: Produto[] = [
   { id: 'prod-1', name: 'Laptop Pro X2', price: 7500.00, stock: 50 },
   { id: 'prod-2', name: 'Monitor Gamer 4K', price: 2800.00, stock: 30 },
   { id: 'prod-3', name: 'Teclado Mecânico RGB', price: 450.50, stock: 100 },
@@ -25,20 +25,20 @@ let products: Product[] = [
   { id: 'prod-5', name: 'Webcam Full HD', price: 350.00, stock: 80 },
 ];
 
-let customers: Customer[] = [
+let clientes: Cliente[] = [
   { id: 'cust-1', name: 'Tech Solutions Ltda', email: 'contato@techsolutions.com' },
   { id: 'cust-2', name: 'Inova Corp', email: 'compras@inovacorp.com' },
   { id: 'cust-3', name: 'Mercado Digital ABC', email: 'financeiro@mercadoabc.com' },
 ];
 
-let sales: Sale[] = [
+let vendas: Venda[] = [
     { id: 'sale-1', customerId: 'cust-1', date: new Date('2024-05-10T10:00:00Z'), total: 10300.00 },
     { id: 'sale-2', customerId: 'cust-2', date: new Date('2024-05-15T14:30:00Z'), total: 649.50 },
     { id: 'sale-3', customerId: 'cust-1', date: new Date('2024-06-02T11:20:00Z'), total: 2800.00 },
     { id: 'sale-4', customerId: 'cust-3', date: new Date('2024-07-20T09:05:00Z'), total: 199.90 },
 ];
 
-let saleItems: SaleItem[] = [
+let itensVenda: ItemVenda[] = [
     { saleId: 'sale-1', productId: 'prod-1', quantity: 1, price: 7500.00 },
     { saleId: 'sale-1', productId: 'prod-2', quantity: 1, price: 2800.00 },
     { saleId: 'sale-2', productId: 'prod-3', quantity: 1, price: 450.50 },
@@ -48,223 +48,221 @@ let saleItems: SaleItem[] = [
 ];
 
 // Função auxiliar para gerar IDs
-const generateId = (prefix: string) => `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+const gerarId = (prefixo: string) => `${prefixo}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-export async function getDashboardStats(): Promise<DashboardStats> {
-  const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
-  const totalSales = sales.length;
-  const activeProducts = products.length;
-  const uniqueCustomers = new Set(sales.map(s => s.customerId)).size;
+export async function obterEstatisticasDashboard(): Promise<EstatisticasDashboard> {
+  const receitaTotal = vendas.reduce((soma, venda) => soma + venda.total, 0);
+  const totalVendas = vendas.length;
+  const produtosAtivos = produtos.length;
+  const clientesUnicos = new Set(vendas.map(v => v.customerId)).size;
 
   return {
-    totalRevenue,
-    totalSales,
-    activeProducts,
-    uniqueCustomers,
+    receitaTotal,
+    totalVendas,
+    produtosAtivos,
+    clientesUnicos,
   };
 }
 
 // --- Produtos CRUD ---
-export async function getProducts(): Promise<Product[]> {
-  return [...products].sort((a, b) => a.name.localeCompare(b.name));
+export async function obterProdutos(): Promise<Produto[]> {
+  return [...produtos].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function createProduct(productData: ProductFormValues): Promise<Product> {
-  const newProduct: Product = {
-    id: generateId('prod'),
-    ...productData,
+export async function criarProduto(dadosProduto: ValoresFormularioProduto): Promise<Produto> {
+  const novoProduto: Produto = {
+    id: gerarId('prod'),
+    ...dadosProduto,
   };
-  products.push(newProduct);
-  return newProduct;
+  produtos.push(novoProduto);
+  return novoProduto;
 }
 
-export async function updateProduct(productData: Product): Promise<Product> {
-  const index = products.findIndex((p) => p.id === productData.id);
-  if (index === -1) throw new Error("Produto não encontrado");
-  products[index] = { ...products[index], ...productData };
-  return products[index];
+export async function atualizarProduto(dadosProduto: Produto): Promise<Produto> {
+  const indice = produtos.findIndex((p) => p.id === dadosProduto.id);
+  if (indice === -1) throw new Error("Produto não encontrado");
+  produtos[indice] = { ...produtos[indice], ...dadosProduto };
+  return produtos[indice];
 }
 
-export async function deleteProduct(productId: string): Promise<void> {
-    const isProductInSale = saleItems.some(item => item.productId === productId);
-    if (isProductInSale) {
+export async function deletarProduto(produtoId: string): Promise<void> {
+    const produtoEmVenda = itensVenda.some(item => item.productId === produtoId);
+    if (produtoEmVenda) {
         throw new Error("Não é possível excluir um produto que já está associado a uma venda.");
     }
-    products = products.filter((p) => p.id !== productId);
+    produtos = produtos.filter((p) => p.id !== produtoId);
 }
 
 // --- Clientes CRUD ---
-export async function getCustomers(): Promise<Customer[]> {
-  return [...customers].sort((a, b) => a.name.localeCompare(b.name));
+export async function obterClientes(): Promise<Cliente[]> {
+  return [...clientes].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function createCustomer(customerData: CustomerFormValues): Promise<Customer> {
-  const newCustomer: Customer = {
-    id: generateId('cust'),
-    ...customerData,
+export async function criarCliente(dadosCliente: ValoresFormularioCliente): Promise<Cliente> {
+  const novoCliente: Cliente = {
+    id: gerarId('cust'),
+    ...dadosCliente,
   };
-  customers.push(newCustomer);
-  return newCustomer;
+  clientes.push(novoCliente);
+  return novoCliente;
 }
 
-export async function updateCustomer(customerData: Customer): Promise<Customer> {
-  const index = customers.findIndex((c) => c.id === customerData.id);
-  if (index === -1) throw new Error("Cliente não encontrado");
-  customers[index] = { ...customers[index], ...customerData };
-  return customers[index];
+export async function atualizarCliente(dadosCliente: Cliente): Promise<Cliente> {
+  const indice = clientes.findIndex((c) => c.id === dadosCliente.id);
+  if (indice === -1) throw new Error("Cliente não encontrado");
+  clientes[indice] = { ...clientes[indice], ...dadosCliente };
+  return clientes[indice];
 }
 
-export async function deleteCustomer(customerId: string): Promise<void> {
-    const isCustomerInSale = sales.some(sale => sale.customerId === customerId);
-    if(isCustomerInSale) {
+export async function deletarCliente(clienteId: string): Promise<void> {
+    const clienteEmVenda = vendas.some(venda => venda.customerId === clienteId);
+    if(clienteEmVenda) {
         throw new Error("Não é possível excluir um cliente que já possui vendas.");
     }
-    customers = customers.filter((c) => c.id !== customerId);
+    clientes = clientes.filter((c) => c.id !== clienteId);
 }
 
 // --- Vendas ---
-export async function getSalesWithDetails(): Promise<SaleWithDetails[]> {
-  const detailedSales = sales.map(sale => {
-    const itemsForSale = saleItems
-      .filter(item => item.saleId === sale.id)
+export async function obterVendasComDetalhes(): Promise<VendaComDetalhes[]> {
+  const vendasDetalhadas = vendas.map(venda => {
+    const itensDaVenda = itensVenda
+      .filter(item => item.saleId === venda.id)
       .map(item => {
-        const product = products.find(p => p.id === item.productId);
+        const produto = produtos.find(p => p.id === item.productId);
         return {
           ...item,
           product: {
-            id: product?.id || 'unknown',
-            name: product?.name || 'Produto Desconhecido'
+            id: produto?.id || 'unknown',
+            name: produto?.name || 'Produto Desconhecido'
           }
         };
       });
 
-    const customer = customers.find(c => c.id === sale.customerId);
+    const cliente = clientes.find(c => c.id === venda.customerId);
     return {
-      ...sale,
+      ...venda,
       customer: {
-        id: customer?.id || 'unknown',
-        name: customer?.name || 'Cliente Desconhecido'
+        id: cliente?.id || 'unknown',
+        name: cliente?.name || 'Cliente Desconhecido'
       },
-      items: itemsForSale
+      items: itensDaVenda
     };
   });
 
-  return detailedSales.sort((a, b) => b.date.getTime() - a.date.getTime());
+  return vendasDetalhadas.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
-export async function createSale(saleData: SaleFormValues): Promise<Sale> {
-    const customer = customers.find(c => c.id === saleData.customerId);
-    if (!customer) {
+export async function criarVenda(dadosVenda: ValoresFormularioVenda): Promise<Venda> {
+    const cliente = clientes.find(c => c.id === dadosVenda.customerId);
+    if (!cliente) {
         throw new Error("Cliente não encontrado.");
     }
 
     let total = 0;
-    const newSaleItems: SaleItem[] = [];
-    const saleId = generateId('sale');
+    const novosItensVenda: ItemVenda[] = [];
+    const idVenda = gerarId('sale');
 
-    for (const item of saleData.items) {
-        const product = products.find(p => p.id === item.productId);
-        if (!product) {
+    for (const item of dadosVenda.items) {
+        const produto = produtos.find(p => p.id === item.productId);
+        if (!produto) {
             throw new Error(`Produto com ID ${item.productId} não encontrado.`);
         }
-        if (product.stock < item.quantity) {
-            throw new Error(`Estoque insuficiente para o produto: ${product.name}. Disponível: ${product.stock}`);
+        if (produto.stock < item.quantity) {
+            throw new Error(`Estoque insuficiente para o produto: ${produto.name}. Disponível: ${produto.stock}`);
         }
-        total += product.price * item.quantity;
-        newSaleItems.push({
-            saleId,
+        total += produto.price * item.quantity;
+        novosItensVenda.push({
+            saleId: idVenda,
             productId: item.productId,
             quantity: item.quantity,
-            price: product.price,
+            price: produto.price,
         });
     }
 
-    const newSale: Sale = {
-        id: saleId,
-        customerId: saleData.customerId,
+    const novaVenda: Venda = {
+        id: idVenda,
+        customerId: dadosVenda.customerId,
         date: new Date(),
         total,
     };
     
     // Atualizar estoque
-    for (const item of saleData.items) {
-        const productIndex = products.findIndex(p => p.id === item.productId);
-        if (productIndex > -1) {
-            products[productIndex].stock -= item.quantity;
+    for (const item of dadosVenda.items) {
+        const indiceProduto = produtos.findIndex(p => p.id === item.productId);
+        if (indiceProduto > -1) {
+            produtos[indiceProduto].stock -= item.quantity;
         }
     }
 
-    sales.push(newSale);
-    saleItems.push(...newSaleItems);
+    vendas.push(novaVenda);
+    itensVenda.push(...novosItensVenda);
     
-    return newSale;
+    return novaVenda;
 }
 
 
 // --- Funções de Análise ---
 
-export async function getSalesByMonth(): Promise<SalesByMonth[]> {
-    const salesByMonth: { [key: string]: number } = {};
+export async function obterVendasPorMes(): Promise<VendasPorMes[]> {
+    const vendasPorMes: { [key: string]: number } = {};
 
-    sales.forEach(sale => {
-        const month = new Date(sale.date).getMonth();
-        if (!salesByMonth[month]) {
-            salesByMonth[month] = 0;
+    vendas.forEach(venda => {
+        const mes = new Date(venda.date).getMonth();
+        if (!vendasPorMes[mes]) {
+            vendasPorMes[mes] = 0;
         }
-        salesByMonth[month] += sale.total;
+        vendasPorMes[mes] += venda.total;
     });
 
-    const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+    const nomesMeses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
     
-    return monthNames.map((name, index) => ({
-        month: name,
-        total: salesByMonth[index] || 0,
+    return nomesMeses.map((nome, indice) => ({
+        mes: nome,
+        total: vendasPorMes[indice] || 0,
     })).filter(d => d.total > 0);
 }
 
 
-export async function getTopProductsSold(): Promise<ProductsSold[]> {
-    const productCount: { [key: string]: number } = {};
+export async function obterProdutosMaisVendidos(): Promise<ProdutoVendido[]> {
+    const contagemProdutos: { [key: string]: number } = {};
 
-    saleItems.forEach(item => {
-        if (!productCount[item.productId]) {
-            productCount[item.productId] = 0;
+    itensVenda.forEach(item => {
+        if (!contagemProdutos[item.productId]) {
+            contagemProdutos[item.productId] = 0;
         }
-        productCount[item.productId] += item.quantity;
+        contagemProdutos[item.productId] += item.quantity;
     });
 
-    return Object.entries(productCount)
+    return Object.entries(contagemProdutos)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
-        .map(([productId, quantity]) => {
-            const product = products.find(p => p.id === productId);
+        .map(([produtoId, quantidade]) => {
+            const produto = produtos.find(p => p.id === produtoId);
             return {
-                productName: product?.name || 'Desconhecido',
-                quantity,
+                nomeProduto: produto?.name || 'Desconhecido',
+                quantidade,
             };
         });
 }
 
-export async function getTopActiveCustomers(): Promise<ActiveCustomer[]> {
-    const customerCount: { [key: string]: number } = {};
+export async function obterClientesMaisAtivos(): Promise<ClienteAtivo[]> {
+    const contagemClientes: { [key: string]: number } = {};
 
-    sales.forEach(sale => {
-        if (!customerCount[sale.customerId]) {
-            customerCount[sale.customerId] = 0;
+    vendas.forEach(venda => {
+        if (!contagemClientes[venda.customerId]) {
+            contagemClientes[venda.customerId] = 0;
         }
-        customerCount[sale.customerId]++;
+        contagemClientes[venda.customerId]++;
     });
 
-    return Object.entries(customerCount)
+    return Object.entries(contagemClientes)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
-        .map(([customerId, count]) => {
-            const customer = customers.find(c => c.id === customerId);
+        .map(([clienteId, contagem]) => {
+            const cliente = clientes.find(c => c.id === clienteId);
             return {
-                customerName: customer?.name || 'Desconhecido',
-                purchaseCount: count,
+                nomeCliente: cliente?.name || 'Desconhecido',
+                quantidadeCompras: contagem,
             };
         });
 }
-
-    

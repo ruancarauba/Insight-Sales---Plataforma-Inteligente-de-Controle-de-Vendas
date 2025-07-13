@@ -8,22 +8,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { getTopActiveCustomers } from "@/services/sales-service"
-import type { ActiveCustomer } from "@/types"
+import { obterClientesMaisAtivos } from "@/services/sales-service"
+import type { ClienteAtivo } from "@/types"
 import { Skeleton } from "./ui/skeleton"
 import { Users } from "lucide-react"
 
-export function ActiveCustomersCard() {
-  const [customers, setCustomers] = React.useState<ActiveCustomer[]>([])
-  const [loading, setLoading] = React.useState(true)
+export function CardClientesAtivos() {
+  const [clientes, setClientes] = React.useState<ClienteAtivo[]>([])
+  const [carregando, setCarregando] = React.useState(true)
 
   React.useEffect(() => {
-    async function loadData() {
-      const data = await getTopActiveCustomers()
-      setCustomers(data)
-      setLoading(false)
+    async function carregarDados() {
+      const dados = await obterClientesMaisAtivos()
+      setClientes(dados)
+      setCarregando(false)
     }
-    loadData()
+    carregarDados()
   }, [])
 
   return (
@@ -35,7 +35,7 @@ export function ActiveCustomersCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {loading ? (
+        {carregando ? (
             <div className="space-y-4">
                 <Skeleton className="h-10 w-full" />
                 <Skeleton className="h-10 w-full" />
@@ -43,14 +43,14 @@ export function ActiveCustomersCard() {
             </div>
         ) : (
         <div className="space-y-4">
-          {customers.length > 0 ? (
-            customers.map((customer) => (
-              <div key={customer.customerName} className="flex items-center">
+          {clientes.length > 0 ? (
+            clientes.map((cliente) => (
+              <div key={cliente.nomeCliente} className="flex items-center">
                 <Users className="h-6 w-6 text-muted-foreground mr-4" />
                 <div className="flex-1">
-                  <p className="font-medium">{customer.customerName}</p>
+                  <p className="font-medium">{cliente.nomeCliente}</p>
                 </div>
-                <div className="font-semibold">{customer.purchaseCount} compras</div>
+                <div className="font-semibold">{cliente.quantidadeCompras} compras</div>
               </div>
             ))
            ) : (

@@ -1,10 +1,10 @@
-import AppLayout from "@/components/app-layout";
-import { SalesReport } from "@/components/sales-report";
+import LayoutAplicacao from "@/components/app-layout";
+import { RelatorioVendas } from "@/components/sales-report";
 
-export default function AiReportPage() {
+export default function PaginaRelatorioIA() {
   return (
-    <AppLayout pageTitle="Relatório de Vendas com IA">
-      <SalesReport />
-    </AppLayout>
+    <LayoutAplicacao pageTitle="Relatório de Vendas com IA">
+      <RelatorioVendas />
+    </LayoutAplicacao>
   );
 }

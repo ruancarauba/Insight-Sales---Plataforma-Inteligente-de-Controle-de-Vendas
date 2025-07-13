@@ -12,16 +12,16 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
-  getSalesWithDetails,
-  createSale,
-  getCustomers,
-  getProducts,
+  obterVendasComDetalhes,
+  criarVenda,
+  obterClientes,
+  obterProdutos,
 } from "@/services/sales-service";
 import type {
-  SaleWithDetails,
-  SaleFormValues,
-  Customer,
-  Product,
+  VendaComDetalhes,
+  ValoresFormularioVenda,
+  Cliente,
+  Produto,
 } from "@/types";
 import { PlusCircle, ShoppingCart } from "lucide-react";
 import {
@@ -51,17 +51,17 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { SaleSchema } from "@/types";
+import { EsquemaVenda } from "@/types";
 
-export function SalesList() {
-  const [sales, setSales] = React.useState<SaleWithDetails[]>([]);
-  const [customers, setCustomers] = React.useState<Customer[]>([]);
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+export function ListaVendas() {
+  const [vendas, setVendas] = React.useState<VendaComDetalhes[]>([]);
+  const [clientes, setClientes] = React.useState<Cliente[]>([]);
+  const [produtos, setProdutos] = React.useState<Produto[]>([]);
+  const [dialogoAberto, setDialogoAberto] = React.useState(false);
   const { toast } = useToast();
 
-  const form = useForm<SaleFormValues>({
-    resolver: zodResolver(SaleSchema),
+  const form = useForm<ValoresFormularioVenda>({
+    resolver: zodResolver(EsquemaVenda),
     defaultValues: {
       customerId: "",
       items: [{ productId: "", quantity: 1 }],
@@ -73,35 +73,35 @@ export function SalesList() {
     name: "items",
   });
 
-  const loadData = React.useCallback(async () => {
-    const [salesData, customersData, productsData] = await Promise.all([
-      getSalesWithDetails(),
-      getCustomers(),
-      getProducts(),
+  const carregarDados = React.useCallback(async () => {
+    const [dadosVendas, dadosClientes, dadosProdutos] = await Promise.all([
+      obterVendasComDetalhes(),
+      obterClientes(),
+      obterProdutos(),
     ]);
-    setSales(salesData);
-    setCustomers(customersData);
-    setProducts(productsData);
+    setVendas(dadosVendas);
+    setClientes(dadosClientes);
+    setProdutos(dadosProdutos);
   }, []);
 
   React.useEffect(() => {
-    loadData();
-  }, [loadData]);
+    carregarDados();
+  }, [carregarDados]);
 
-  const handleNew = () => {
+  const tratarNova = () => {
     form.reset({ customerId: "", items: [{ productId: "", quantity: 1 }] });
-    setIsDialogOpen(true);
+    setDialogoAberto(true);
   };
 
-  const onSubmit = async (values: SaleFormValues) => {
+  const aoEnviar = async (valores: ValoresFormularioVenda) => {
     try {
-      await createSale(values);
+      await criarVenda(valores);
       toast({
         title: "Sucesso!",
         description: "Venda registrada com sucesso.",
       });
-      setIsDialogOpen(false);
-      loadData();
+      setDialogoAberto(false);
+      carregarDados();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -118,7 +118,7 @@ export function SalesList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Histórico de Vendas</h2>
-        <Button onClick={handleNew}>
+        <Button onClick={tratarNova}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Nova Venda
         </Button>
@@ -135,22 +135,22 @@ export function SalesList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sales.length > 0 ? (
-              sales.map((sale) => (
-                <TableRow key={sale.id}>
+            {vendas.length > 0 ? (
+              vendas.map((venda) => (
+                <TableRow key={venda.id}>
                   <TableCell className="font-medium">
-                    {sale.customer.name}
+                    {venda.customer.name}
                   </TableCell>
                   <TableCell>
-                    {new Date(sale.date).toLocaleDateString("pt-BR")}
+                    {new Date(venda.date).toLocaleDateString("pt-BR")}
                   </TableCell>
                   <TableCell>
-                    {sale.items
+                    {venda.items
                       .map((item) => `${item.quantity}x ${item.product.name}`)
                       .join(", ")}
                   </TableCell>
                   <TableCell className="text-right">
-                    {sale.total.toLocaleString("pt-BR", {
+                    {venda.total.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
@@ -168,7 +168,7 @@ export function SalesList() {
         </Table>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={dialogoAberto} onOpenChange={setDialogoAberto}>
         <DialogContent className="sm:max-w-4xl">
           <DialogHeader>
             <DialogTitle>Registrar Nova Venda</DialogTitle>
@@ -177,7 +177,7 @@ export function SalesList() {
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(aoEnviar)} className="space-y-6">
               <div className="space-y-4">
                 <FormField
                   control={form.control}
@@ -195,7 +195,7 @@ export function SalesList() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {customers.map((c) => (
+                          {clientes.map((c) => (
                             <SelectItem key={c.id} value={c.id}>
                               {c.name}
                             </SelectItem>
@@ -231,7 +231,7 @@ export function SalesList() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {products.map((p) => (
+                                  {produtos.map((p) => (
                                     <SelectItem
                                       key={p.id}
                                       value={p.id}
@@ -298,5 +298,3 @@ export function SalesList() {
     </div>
   );
 }
-
-    

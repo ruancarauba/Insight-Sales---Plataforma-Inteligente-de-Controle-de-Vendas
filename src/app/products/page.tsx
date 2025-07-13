@@ -1,10 +1,10 @@
-import AppLayout from "@/components/app-layout";
-import { ProductsList } from "@/components/products-list";
+import LayoutAplicacao from "@/components/app-layout";
+import { ListaProdutos } from "@/components/products-list";
 
-export default function ProductsPage() {
+export default function PaginaProdutos() {
   return (
-    <AppLayout pageTitle="Produtos">
-      <ProductsList />
-    </AppLayout>
+    <LayoutAplicacao pageTitle="Produtos">
+      <ListaProdutos />
+    </LayoutAplicacao>
   );
 }

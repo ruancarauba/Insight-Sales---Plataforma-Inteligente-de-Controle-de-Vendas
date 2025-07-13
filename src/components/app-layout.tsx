@@ -3,104 +3,104 @@
 
 import {
   Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
-  SidebarTrigger,
+  ConteudoSidebar,
+  RodapeSidebar,
+  CabecalhoSidebar,
+  LayoutInterno,
+  MenuSidebar,
+  BotaoMenuSidebar,
+  ItemMenuSidebar,
+  SeparadorSidebar,
+  GatilhoSidebar,
 } from "@/components/ui/sidebar";
 import { Home, ShoppingCart, Package, BarChart3, Bot, Users, Lightbulb, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { Button } from "./ui/button";
 
-export default function AppLayout({ children, pageTitle = "Dashboard" }: { children: React.ReactNode, pageTitle?: string }) {
+export default function LayoutAplicacao({ children, tituloPagina = "Dashboard" }: { children: React.ReactNode, tituloPagina?: string }) {
   const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen">
       <Sidebar>
-        <SidebarHeader>
+        <CabecalhoSidebar>
           <div className="flex items-center gap-2">
             <Bot size={24} className="text-primary" />
             <h1 className="text-lg font-semibold font-grotesk">Sales Insights Hub</h1>
           </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
+        </CabecalhoSidebar>
+        <ConteudoSidebar>
+          <MenuSidebar>
+            <ItemMenuSidebar>
               <Link href="/dashboard">
-                <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/dashboard'}>
+                <BotaoMenuSidebar tooltip="Dashboard" isActive={pathname === '/dashboard'}>
                   <Home />
                   <span>Dashboard</span>
-                </SidebarMenuButton>
+                </BotaoMenuSidebar>
               </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
+            </ItemMenuSidebar>
+            <ItemMenuSidebar>
               <Link href="/sales">
-                <SidebarMenuButton tooltip="Vendas" isActive={pathname.startsWith('/sales')}>
+                <BotaoMenuSidebar tooltip="Vendas" isActive={pathname.startsWith('/sales')}>
                   <ShoppingCart />
                   <span>Vendas</span>
-                </SidebarMenuButton>
+                </BotaoMenuSidebar>
               </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
+            </ItemMenuSidebar>
+            <ItemMenuSidebar>
               <Link href="/products">
-                <SidebarMenuButton tooltip="Produtos" isActive={pathname.startsWith('/products')}>
+                <BotaoMenuSidebar tooltip="Produtos" isActive={pathname.startsWith('/products')}>
                   <Package />
                   <span>Produtos</span>
-                </SidebarMenuButton>
+                </BotaoMenuSidebar>
               </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
+            </ItemMenuSidebar>
+            <ItemMenuSidebar>
               <Link href="/customers">
-                <SidebarMenuButton tooltip="Clientes" isActive={pathname.startsWith('/customers')}>
+                <BotaoMenuSidebar tooltip="Clientes" isActive={pathname.startsWith('/customers')}>
                   <Users />
                   <span>Clientes</span>
-                </SidebarMenuButton>
+                </BotaoMenuSidebar>
               </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
+            </ItemMenuSidebar>
+            <ItemMenuSidebar>
                <Link href="/performance">
-                <SidebarMenuButton tooltip="Análise" isActive={pathname.startsWith('/performance')}>
+                <BotaoMenuSidebar tooltip="Análise" isActive={pathname.startsWith('/performance')}>
                   <BarChart3 />
                   <span>Análise</span>
-                </SidebarMenuButton>
+                </BotaoMenuSidebar>
               </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
+            </ItemMenuSidebar>
+            <ItemMenuSidebar>
                <Link href="/ai-report">
-                <SidebarMenuButton tooltip="Relatório IA" isActive={pathname.startsWith('/ai-report')}>
+                <BotaoMenuSidebar tooltip="Relatório IA" isActive={pathname.startsWith('/ai-report')}>
                   <Lightbulb />
                   <span>Relatório IA</span>
-                </SidebarMenuButton>
+                </BotaoMenuSidebar>
               </Link>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarSeparator />
-        <SidebarFooter>
+            </ItemMenuSidebar>
+          </MenuSidebar>
+        </ConteudoSidebar>
+        <SeparadorSidebar />
+        <RodapeSidebar>
           <Link href="/">
             <Button variant="ghost" className="w-full justify-start">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sair</span>
             </Button>
           </Link>
-        </SidebarFooter>
+        </RodapeSidebar>
       </Sidebar>
-      <SidebarInset>
+      <LayoutInterno>
         <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
-          <SidebarTrigger className="md:hidden" />
+          <GatilhoSidebar className="md:hidden" />
           <div className="flex-1">
-            <h1 className="text-lg font-semibold font-grotesk">{pageTitle}</h1>
+            <h1 className="text-lg font-semibold font-grotesk">{tituloPagina}</h1>
           </div>
         </header>
         <main className="flex-1 p-6">{children}</main>
-      </SidebarInset>
+      </LayoutInterno>
     </div>
   );
 }
