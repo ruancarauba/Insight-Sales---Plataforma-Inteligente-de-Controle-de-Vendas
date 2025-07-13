@@ -8,8 +8,7 @@ import { obterEstatisticasDashboard } from "@/services/sales-service";
 import type { EstatisticasDashboard } from "@/types";
 import { VendasRecentes } from "./recent-sales";
 import { CardProdutosVendidos } from "./products-sold-card";
-import { CardClientesAtivos } from "./active-customers-card";
-import { GraficoVendasPorMes } from "./sales-by-month-chart";
+import { Skeleton } from "./ui/skeleton";
 
 export function Dashboard() {
   const [estatisticas, setEstatisticas] = useState<EstatisticasDashboard | null>(null);
@@ -24,7 +23,7 @@ export function Dashboard() {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -38,7 +37,7 @@ export function Dashboard() {
                 {estatisticas.receitaTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}
               </div>
             ) : (
-              <div className="h-8 w-3/4 animate-pulse rounded-md bg-muted"></div>
+               <Skeleton className="h-8 w-3/4" />
             )}
           </CardContent>
         </Card>
@@ -51,7 +50,7 @@ export function Dashboard() {
             {estatisticas ? (
               <div className="text-2xl font-bold">+{estatisticas.totalVendas}</div>
             ) : (
-              <div className="h-8 w-1/2 animate-pulse rounded-md bg-muted"></div>
+              <Skeleton className="h-8 w-1/2" />
             )}
           </CardContent>
         </Card>
@@ -66,7 +65,7 @@ export function Dashboard() {
             {estatisticas ? (
               <div className="text-2xl font-bold">{estatisticas.produtosAtivos}</div>
             ) : (
-              <div className="h-8 w-1/4 animate-pulse rounded-md bg-muted"></div>
+              <Skeleton className="h-8 w-1/4" />
             )}
           </CardContent>
         </Card>
@@ -81,7 +80,7 @@ export function Dashboard() {
             {estatisticas ? (
               <div className="text-2xl font-bold">{estatisticas.clientesUnicos}</div>
             ) : (
-              <div className="h-8 w-1/4 animate-pulse rounded-md bg-muted"></div>
+              <Skeleton className="h-8 w-1/4" />
             )}
           </CardContent>
         </Card>
